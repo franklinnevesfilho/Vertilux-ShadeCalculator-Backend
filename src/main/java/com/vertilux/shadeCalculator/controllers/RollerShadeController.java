@@ -13,6 +13,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * RollerShadeController
+ *This class is the controller for the RollerShadeSystem entity.
+ * It handles all the endpoints associated with its CRUD operations.
+ *
+ * @author Franklin Neves Filho
+ */
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/roller-shade")
@@ -45,6 +53,16 @@ public class RollerShadeController extends MainController{
         }else{
             return factory.createBadRequestResponse();
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Response> deleteRollerShade(@PathVariable("id") String id){
+        return getByParam(delete, id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response> updateRollerShade(@PathVariable("id") String id, @RequestBody RollerShadeSystemCreation system){
+        return getByTwoParameter(update, id, system);
     }
 
 }
