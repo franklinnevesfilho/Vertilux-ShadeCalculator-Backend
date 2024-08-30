@@ -1,4 +1,4 @@
-package com.vertilux.shadecalculatorbackend;
+package com.vertilux.shadeCalculator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
