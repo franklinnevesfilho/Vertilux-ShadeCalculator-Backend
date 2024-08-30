@@ -37,7 +37,7 @@ public class MeasurementConverter {
                 .orElse(null);
 
         if (conversion != null) {
-            result = from.value * conversion.getConversionFactor();
+            result = from.getValue() * conversion.getConversionFactor();
         }
 
         return Measurement.builder()
