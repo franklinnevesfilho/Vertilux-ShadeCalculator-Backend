@@ -19,6 +19,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Embeddable
 public class Measurement {
-    public String value;
+    public double value;
     public String unit;
 }
