@@ -19,6 +19,7 @@ import java.util.Optional;
  * Measurement Service
  * This class handles all the CRUD operations for the measurement units, and their conversion rates.
  *
+ * @see MeasurementConverter for precise usage
  * @author Franklin Neves Filho
  */
 
