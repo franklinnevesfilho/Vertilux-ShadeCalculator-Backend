@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.controllers;
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.schemas.Dto;
+import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.schemas.RollerShadeSystemCreation;
 import com.vertilux.shadeCalculator.services.RollerShadeService;
 import jakarta.websocket.server.PathParam;
@@ -28,11 +28,11 @@ public class RollerShadeController extends MainController{
     private RollerShadeService rollerShadeService;
 
     private final Supplier<Response> getAll = () -> rollerShadeService.getAll();
-    private final Function<Dto, Response> save = (system) -> rollerShadeService.save((RollerShadeSystemCreation) system);
+    private final Function<Schema, Response> save = (system) -> rollerShadeService.save((RollerShadeSystemCreation) system);
     private final Function<String, Response> getByName = (name) -> rollerShadeService.getByName(name);
     private final Function<String, Response> getById = (id) -> rollerShadeService.getById(id);
     private final Function<String, Response> delete = (id) -> rollerShadeService.delete(id);
-    private final BiFunction<String, Dto, Response> update = (id, update) -> rollerShadeService.update(id, (RollerShadeSystemCreation) update);
+    private final BiFunction<String, Schema, Response> update = (id, update) -> rollerShadeService.update(id, (RollerShadeSystemCreation) update);
 
     @PostMapping("/save")
     public ResponseEntity<Response> save(@RequestBody RollerShadeSystemCreation system){

@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class MeasurementUnitCreation implements Dto{
-    String unit;
+public class ConversionCreation implements Schema {
+    private String from;
+    private String to;
+    private double rate;
 }

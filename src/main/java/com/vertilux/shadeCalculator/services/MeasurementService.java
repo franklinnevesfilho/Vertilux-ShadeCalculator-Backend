@@ -6,7 +6,7 @@ import com.vertilux.shadeCalculator.models.measurements.MeasurementUnit;
 import com.vertilux.shadeCalculator.models.measurements.UnitConversion;
 import com.vertilux.shadeCalculator.repositories.ConversionRepo;
 import com.vertilux.shadeCalculator.repositories.MeasurementRepo;
-import com.vertilux.shadeCalculator.schemas.MeasurementUnitCreation;
+import com.vertilux.shadeCalculator.schemas.ConversionCreation;
 import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,32 +82,6 @@ public class MeasurementService extends MainService{
     }
 
     /**
-     * This method saves a new measurement unit to the database.
-     * @param unit The MeasurementUnit object to be saved
-     * @return Response object with the saved MeasurementUnit
-     */
-    public Response saveUnit(MeasurementUnitCreation unit) {
-        Response response;
-
-        Optional<MeasurementUnit> found = measurementRepo.findByUnit(unit.getUnit());
-        if (found.isPresent()) {
-            response = Response.builder()
-                    .errors(List.of("Unit already exists"))
-                    .status("error")
-                    .build();
-            return response;
-        } else {
-            MeasurementUnit newUnit = MeasurementUnit.builder()
-                    .unit(unit.getUnit())
-                    .build();
-            MeasurementUnit savedUnit = measurementRepo.save(newUnit);
-            return Response.builder()
-                    .data(mapToJson(savedUnit))
-                    .build();
-        }
-    }
-
-    /**
      * @param unitId The id of the unit to be deleted
      * @return Response object with the status of the operation
      */
@@ -156,31 +130,36 @@ public class MeasurementService extends MainService{
 
     /**
      * This method saves a new conversion rate to the database.
-     * @param fromUnit The unit to convert from
-     * @param toUnit The unit to convert to
-     * @param conversionRate The conversion rate
+     * @param conversion Contains from, to and rate attribute for conversion
      * @return Response object with the saved UnitConversion
      */
-    public Response saveConversion(String fromUnit, String toUnit, double conversionRate) {
+    public Response saveConversion(ConversionCreation conversion) {
         Response response;
 
-        Optional<MeasurementUnit> from = measurementRepo.findByUnit(fromUnit);
-        Optional<MeasurementUnit> to = measurementRepo.findByUnit(toUnit);
+        Optional<MeasurementUnit> optFrom = measurementRepo.findByUnit(conversion.getFrom());
+        Optional<MeasurementUnit> optTo = measurementRepo.findByUnit(conversion.getTo());
+        MeasurementUnit from;
+        MeasurementUnit to;
 
-        if (from.isEmpty() || to.isEmpty()) {
+        if(optFrom.isPresent() && optTo.isPresent()){
+            from = optFrom.get();
+            to = optTo.get();
+        }else{
+            from = saveUnit(conversion.getFrom());
+            to = saveUnit(conversion.getTo());
+        }
+
+        if (conversionRepo.findByFromUnitAndToUnit(from, to).isPresent()){
+
             response = Response.builder()
-                    .errors(List.of("One or more units do not exist"))
-                    .build();
-            return response;
-        }else if (conversionRepo.findByFromUnitAndToUnit(from.get(), to.get()).isPresent()){
-                response = Response.builder()
                         .errors(List.of("Conversion already exists"))
                         .build();
         } else{
+
             UnitConversion newConversion = UnitConversion.builder()
-                    .fromUnit(from.get())
-                    .toUnit(to.get())
-                    .conversionFactor(conversionRate)
+                    .fromUnit(from)
+                    .toUnit(to)
+                    .conversionFactor(conversion.getRate())
                     .build();
             UnitConversion savedConversion = conversionRepo.save(newConversion);
             response = Response.builder()
@@ -234,4 +213,24 @@ public class MeasurementService extends MainService{
 
         return response;
     }
+
+    /**
+     * This method saves a new measurement unit to the database.
+     * @param unit The MeasurementUnit object to be saved
+     * @return MeasurementUnit object
+     */
+    private MeasurementUnit saveUnit(String unit) {
+        Optional<MeasurementUnit> found = measurementRepo.findByUnit(unit);
+        if (found.isPresent()) {
+            return found.get();
+        } else {
+            MeasurementUnit newUnit = MeasurementUnit.builder()
+                    .unit(unit)
+                    .build();
+            return measurementRepo.save(newUnit);
+
+        }
+    }
 }
+
+

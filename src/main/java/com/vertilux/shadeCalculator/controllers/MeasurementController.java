@@ -1,13 +1,13 @@
 package com.vertilux.shadeCalculator.controllers;
 
 import com.vertilux.shadeCalculator.models.Response;
+import com.vertilux.shadeCalculator.schemas.ConversionCreation;
+import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.services.MeasurementService;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +32,7 @@ public class MeasurementController extends MainController{
     private final Function<String, Response> getUnitByName = (name) -> measurementService.getUnitByName(name);
     private final Function<String, Response> deleteUnitById = (id) -> measurementService.deleteUnitById(id);
     private final Function<String, Response> deleteUnitByName = (name) -> measurementService.deleteUnitByName(name);
+    private final Function<Schema, Response> saveConversion = (conversion) -> measurementService.saveConversion((ConversionCreation) conversion);
 
     @GetMapping("/all-units")
     public ResponseEntity<Response> getAllUnits() {
@@ -63,6 +64,11 @@ public class MeasurementController extends MainController{
         } else{
             return factory.createBadRequestResponse();
         }
+    }
+
+    @PostMapping("/conversion")
+    public ResponseEntity<Response> saveMeasurement(@RequestBody ConversionCreation conversion){
+        return request(saveConversion, conversion);
     }
 
 }

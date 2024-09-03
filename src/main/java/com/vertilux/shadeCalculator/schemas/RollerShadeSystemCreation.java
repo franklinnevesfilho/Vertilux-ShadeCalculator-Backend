@@ -19,6 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class RollerShadeSystemCreation implements Dto{
-    String name;
+public class RollerShadeSystemCreation implements Schema {
+    private String name;
 }
