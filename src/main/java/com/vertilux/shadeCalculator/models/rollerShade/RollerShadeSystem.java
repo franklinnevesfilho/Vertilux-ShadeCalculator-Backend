@@ -1,4 +1,4 @@
-package com.vertilux.shadeCalculator.models;
+package com.vertilux.shadeCalculator.models.rollerShade;
 
 
 import jakarta.persistence.*;
@@ -28,4 +28,7 @@ public class RollerShadeSystem {
 
     @Column(name="name")
     private String name;
+
+    @Column(name="max_roll_up_diameter")
+    private double maxRollUpDiameter;
 }

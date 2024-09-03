@@ -2,7 +2,7 @@ package com.vertilux.shadeCalculator.services;
 
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.RollerShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
 import com.vertilux.shadeCalculator.repositories.RollerShadeRepo;
 import com.vertilux.shadeCalculator.schemas.RollerShadeSystemCreation;
 import lombok.AllArgsConstructor;

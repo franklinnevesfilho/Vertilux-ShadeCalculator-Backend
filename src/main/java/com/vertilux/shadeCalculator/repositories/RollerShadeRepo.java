@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator.repositories;
 
-import com.vertilux.shadeCalculator.models.RollerShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
