@@ -33,6 +33,7 @@ public class MeasurementController extends MainController{
     private final Function<String, Response> deleteUnitById = (id) -> measurementService.deleteUnitById(id);
     private final Function<String, Response> deleteUnitByName = (name) -> measurementService.deleteUnitByName(name);
     private final Function<Schema, Response> saveConversion = (conversion) -> measurementService.saveConversion((ConversionCreation) conversion);
+    private final Function<String, Response> deleteConversion = (id) -> measurementService.deleteConversion(id);
 
     @GetMapping("/all-units")
     public ResponseEntity<Response> getAllUnits() {
@@ -70,5 +71,11 @@ public class MeasurementController extends MainController{
     public ResponseEntity<Response> saveMeasurement(@RequestBody ConversionCreation conversion){
         return request(saveConversion, conversion);
     }
+
+    @DeleteMapping("/conversion")
+    public ResponseEntity<Response> deleteConversion(@PathParam("from") String id){
+        return getByParam(deleteConversion, id);
+    }
+
 
 }
