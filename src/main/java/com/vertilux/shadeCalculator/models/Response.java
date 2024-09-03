@@ -24,5 +24,8 @@ public class Response {
     private JsonNode data;
 
     @Builder.Default
+    private String status = "success";
+
+    @Builder.Default
     private List<String> errors = new LinkedList<>();
 }

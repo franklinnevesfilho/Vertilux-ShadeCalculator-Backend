@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -18,4 +20,18 @@ public class MeasurementUnit {
 
     @Column(name="unit")
     private String unit;
+
+    @OneToMany(
+            mappedBy = "fromUnit",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UnitConversion> fromConversions;
+
+    @OneToMany(
+            mappedBy = "toUnit",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UnitConversion> toConversions;
 }

@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.controllers;
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.schemas.Dto;
+import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.utils.ResponseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +64,7 @@ public class MainController {
      * @param object the second parameter to be used (Object)
      * @return An instance of ResponseEntity<Response> with the resulting status
      */
-    protected ResponseEntity<Response> getByTwoParameter(BiFunction<String, Dto, Response> function, String param, Dto object){
+    protected ResponseEntity<Response> getByTwoParameter(BiFunction<String, Schema, Response> function, String param, Schema object){
         ResponseEntity<Response> responseEntity;
         if(param != null && !param.isEmpty() && object != null){
             Response response = function.apply(param,object);
@@ -85,7 +85,7 @@ public class MainController {
      * @param object the object to be used
      * @return An instance of ResponseEntity<Response> with the resulting status
      */
-    protected ResponseEntity<Response> request(Function<Dto, Response> function, Dto object){
+    protected ResponseEntity<Response> request(Function<Schema, Response> function, Schema object){
         ResponseEntity<Response> responseEntity;
         if(object != null){
             Response response = function.apply(object);

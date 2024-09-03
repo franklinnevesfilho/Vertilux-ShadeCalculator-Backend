@@ -8,4 +8,4 @@ package com.vertilux.shadeCalculator.schemas;
  *
  * @author Franklin Neves
  */
-public interface Dto {}
+public interface Schema {}
