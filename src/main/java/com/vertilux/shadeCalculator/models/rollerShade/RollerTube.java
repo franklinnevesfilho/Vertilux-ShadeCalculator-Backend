@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name="roller_tubes")
-public class RollerShadeTube {
+public class RollerTube {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -63,9 +63,11 @@ public class RollerShadeTube {
     /**
      * This method calculates the deflection of the tube
      * based on the load applied to it.
+     * @param load The entire load applied to the tube
      * @return the deflection of the tube
      */
-    public Measurement getTubeDeflection() {
+    public Measurement getTubeDeflection(Measurement load) {
         return Measurement.builder().build();
+
     }
 }

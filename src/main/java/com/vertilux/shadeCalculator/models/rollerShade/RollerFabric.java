@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name="roller_shade_fabric")
-public class RollerShadeFabric {
+public class RollerFabric {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
