@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/component")
+@RequestMapping("/components")
 public class ComponentController extends MainController {
     private RollerTubeService rollerTubeService;
     private RollerFabricService fabricService;
@@ -39,7 +39,11 @@ public class ComponentController extends MainController {
     private final BiFunction<String, Schema, Response> updateTube = (id, tube) -> rollerTubeService.updateRollerTube(id, (RollerTubeCreation) tube);
 
     private final Supplier<Response> getAllFabrics = () -> fabricService.getAllRollerFabrics();
+    private final Function<String, Response> getFabricByName = (name) -> fabricService.getRollerFabricByName(name);
+    private final Function<String, Response> getFabricById = (id) -> fabricService.getRollerFabricById(id);
     private final Function<Schema, Response> saveFabric = (fabric) -> fabricService.createRollerFabric((RollerFabricCreation) fabric);
+    private final Function<String, Response> deleteFabric = (id) -> fabricService.deleteRollerFabric(id);
+    private final BiFunction<String, Schema, Response> updateFabric = (id, fabric) -> fabricService.updateRollerFabric(id, (RollerFabricCreation) fabric);
 
 
     @PostMapping("/{serviceName}/save")
@@ -64,6 +68,7 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> getByName(@PathVariable("serviceName") String serviceName, @RequestParam String name){
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeByName, name);
+            case "fabric" -> getByParam(getFabricByName, name);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -72,6 +77,7 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> getById(@PathVariable("serviceName") String serviceName, @RequestParam String id){
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeById, id);
+            case "fabric" -> getByParam(getFabricById, id);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -80,6 +86,16 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> delete(@PathVariable("serviceName") String serviceName, @RequestParam String id){
         return switch (serviceName) {
             case "tube" -> getByParam(deleteTube, id);
+            case "fabric" -> getByParam(deleteFabric, id);
+            default -> factory.createBadRequestResponse();
+        };
+    }
+
+    @PutMapping("/{serviceName}/update")
+    public ResponseEntity<Response> update(@PathVariable("serviceName") String serviceName, @RequestParam String id, @RequestBody Schema object){
+        return switch (serviceName) {
+            case "tube" -> getByTwoParam(updateTube, id, object);
+            case "fabric" -> getByTwoParam(updateFabric, id, object);
             default -> factory.createBadRequestResponse();
         };
     }

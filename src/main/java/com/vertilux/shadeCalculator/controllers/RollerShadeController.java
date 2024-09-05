@@ -62,7 +62,7 @@ public class RollerShadeController extends MainController{
 
     @PutMapping("/{id}")
     public ResponseEntity<Response> updateRollerShade(@PathVariable("id") String id, @RequestBody RollerShadeSystemCreation system){
-        return getByTwoParameter(update, id, system);
+        return getByTwoParam(update, id, system);
     }
 
 }

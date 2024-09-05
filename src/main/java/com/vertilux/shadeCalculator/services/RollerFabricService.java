@@ -112,7 +112,7 @@ public class RollerFabricService extends MainService {
      * @param fabric The fabric to be updated
      * @return Response object with the updated RollerFabric
      */
-    public Response updateRollerFabric(String id, RollerFabric fabric) {
+    public Response updateRollerFabric(String id, RollerFabricCreation fabric) {
         RollerFabric found = rollerFabricRepo.findById(id).orElse(null);
         if (found != null) {
             found.setName(fabric.getName());

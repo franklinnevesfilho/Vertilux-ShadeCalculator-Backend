@@ -64,7 +64,7 @@ public class MainController {
      * @param object the second parameter to be used (Object)
      * @return An instance of ResponseEntity<Response> with the resulting status
      */
-    protected ResponseEntity<Response> getByTwoParameter(BiFunction<String, Schema, Response> function, String param, Schema object){
+    protected ResponseEntity<Response> getByTwoParam(BiFunction<String, Schema, Response> function, String param, Schema object){
         ResponseEntity<Response> responseEntity;
         if(param != null && !param.isEmpty() && object != null){
             Response response = function.apply(param,object);
