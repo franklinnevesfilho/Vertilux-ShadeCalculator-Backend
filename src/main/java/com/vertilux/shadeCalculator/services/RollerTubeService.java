@@ -42,7 +42,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the found RollerTube
      */
     public Response getRollerTubeByName(String tubeName) {
-        RollerTube found = rollerTubeRepo.findByName(tubeName);
+        RollerTube found = rollerTubeRepo.findByName(tubeName).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -80,7 +80,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the created RollerTube
      */
     public Response createRollerTube(RollerTubeCreation tube) {
-        Optional<RollerTube> found = Optional.ofNullable(rollerTubeRepo.findByName(tube.getName()));
+        Optional<RollerTube> found = rollerTubeRepo.findByName(tube.getName());
         if (found.isPresent()) {
             return Response.builder()
                     .errors(List.of("Tube already exists"))
@@ -121,7 +121,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the deleted RollerTube
      */
     public Response deleteRollerTube(String tubeName) {
-        RollerTube found = rollerTubeRepo.findByName(tubeName);
+        RollerTube found = rollerTubeRepo.findByName(tubeName).orElse(null);
         if (found != null) {
             rollerTubeRepo.delete(found);
             return Response.builder()
@@ -141,12 +141,11 @@ public class RollerTubeService extends MainService{
      * @return The converted RollerTube object
      */
     private RollerTube convertToRollerTube(RollerTubeCreation tube) {
+
         return RollerTube.builder()
                 .name(tube.getName())
                 .outerDiameter(tube.getOuterDiameter())
                 .innerDiameter(tube.getInnerDiameter())
-                .modulus(tube.getModulus())
-                .density(tube.getDensity())
                 .build();
     }
 

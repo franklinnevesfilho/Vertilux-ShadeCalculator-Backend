@@ -4,6 +4,8 @@ import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * RollerTubeRepo
  * <p>
@@ -18,5 +20,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RollerTubeRepo extends JpaRepository<RollerTube, String> {
-    RollerTube findByName(String tubeName);
+    Optional<RollerTube> findByName(String tubeName);
 }

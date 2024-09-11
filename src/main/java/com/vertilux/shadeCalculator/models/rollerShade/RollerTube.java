@@ -1,6 +1,7 @@
 package com.vertilux.shadeCalculator.models.rollerShade;
 
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="roller_tubes")
 public class RollerTube {
+    @Transient
+    MeasurementConverter measurementConverter;
+
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -61,13 +65,24 @@ public class RollerTube {
 
 
     /**
-     * This method calculates the deflection of the tube
-     * based on the load applied to it.
-     * @param load The entire load applied to the tube
-     * @return the deflection of the tube
+     * This method calculates the thickness of the tube.
+     * returns -1 if the unit is not found
+     * @return the thickness of the tube (outer diameter - inner diameter)
      */
-    public Measurement getTubeDeflection(Measurement load) {
-        return Measurement.builder().build();
+    public Measurement getThickness(){
+        double difference = -1;
+        if(outerDiameter.getUnit().equals(innerDiameter.getUnit())){
+            difference = outerDiameter.getValue() - innerDiameter.getValue();
+        } else {
+            Measurement convertedInnerDiameter = measurementConverter.convert(innerDiameter, outerDiameter.getUnit());
+            if(convertedInnerDiameter.getValue() != -1){
+                difference = outerDiameter.getValue() - convertedInnerDiameter.getValue();
+            }
+        }
 
+        return Measurement.builder()
+                .value(difference)
+                .unit(outerDiameter.getUnit())
+                .build();
     }
 }

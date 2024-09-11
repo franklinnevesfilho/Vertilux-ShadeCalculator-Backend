@@ -38,9 +38,10 @@ public class MeasurementService extends MainService{
      */
     public Response getAllUnits(){
         List<MeasurementUnit> units = measurementRepo.findAll();
+        log.info("Units: {}", units.stream().toList());
 
         return Response.builder()
-                .data(mapToJson(units))
+                .data(mapToJson(measurementRepo.findAll()))
                 .build();
     }
 
@@ -137,37 +138,28 @@ public class MeasurementService extends MainService{
     public Response saveConversion(ConversionCreation conversion) {
         Response response;
 
-        Optional<MeasurementUnit> optFrom = measurementRepo.findByUnit(conversion.getFrom());
-        Optional<MeasurementUnit> optTo = measurementRepo.findByUnit(conversion.getTo());
-        MeasurementUnit from;
-        MeasurementUnit to;
+        MeasurementUnit from = saveUnit(conversion.getFrom());
+        MeasurementUnit to = saveUnit(conversion.getTo());
 
-        if(optFrom.isPresent() && optTo.isPresent()){
-            from = optFrom.get();
-            to = optTo.get();
+        UnitConversion found = conversionRepo.findByFromAndTo(from, to).orElse(null);
+        if (found != null) {
+            response = Response.builder()
+                    .errors(List.of("Conversion already exists"))
+                    .status("error")
+                    .build();
         }else{
-            from = saveUnit(conversion.getFrom());
-            to = saveUnit(conversion.getTo());
-        }
-
-        if (conversionRepo.findByFromUnitAndToUnit(from, to).isPresent()){
-
-            response = Response.builder()
-                        .errors(List.of("Conversion already exists"))
-                        .build();
-        } else{
-
             UnitConversion newConversion = UnitConversion.builder()
-                    .fromUnit(from)
-                    .toUnit(to)
-                    .conversionFactor(conversion.getRate())
-                    .build();
-            UnitConversion savedConversion = conversionRepo.save(newConversion);
+                .from(from)
+                .to(to)
+                .factor(conversion.getFactor())
+                .build();
+
+            newConversion = conversionRepo.save(newConversion);
+
             response = Response.builder()
-                    .data(mapToJson(savedConversion))
+                    .data(mapToJson(newConversion))
                     .build();
         }
-
         return response;
     }
 
@@ -207,7 +199,7 @@ public class MeasurementService extends MainService{
                     .build();
         }else{
             response = Response.builder()
-                    .data(mapToJson(measurementConverter.convert(measurement, to.get())))
+                    .data(mapToJson(measurementConverter.convert(measurement, toUnit)))
                     .build();
         }
 

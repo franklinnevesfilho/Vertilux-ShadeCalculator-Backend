@@ -1,6 +1,7 @@
 package com.vertilux.shadeCalculator.models.rollerShade;
 
 
+import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,10 @@ public class RollerShadeSystem {
     @Column(name="name")
     private String name;
 
-    @Column(name="max_roll_up_diameter")
-    private double maxRollUpDiameter;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "diameter_value")),
+            @AttributeOverride(name = "unit", column = @Column(name = "diameter_unit"))
+    })
+    private Measurement maxDiameter;
 }

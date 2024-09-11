@@ -1,9 +1,11 @@
 package com.vertilux.shadeCalculator.controllers;
 
 import com.vertilux.shadeCalculator.models.Response;
+import com.vertilux.shadeCalculator.schemas.BottomRailCreation;
 import com.vertilux.shadeCalculator.schemas.RollerFabricCreation;
 import com.vertilux.shadeCalculator.schemas.RollerTubeCreation;
 import com.vertilux.shadeCalculator.schemas.Schema;
+import com.vertilux.shadeCalculator.services.BottomRailService;
 import com.vertilux.shadeCalculator.services.RollerFabricService;
 import com.vertilux.shadeCalculator.services.RollerTubeService;
 import lombok.AllArgsConstructor;
@@ -30,20 +32,47 @@ import java.util.function.Supplier;
 public class ComponentController extends MainController {
     private RollerTubeService rollerTubeService;
     private RollerFabricService fabricService;
+    private BottomRailService bottomRailService;
 
-    private final Supplier<Response> getAllTubes = () -> rollerTubeService.getAllRollerTubes();
-    private final Function<String, Response> getTubeByName = (name) -> rollerTubeService.getRollerTubeByName(name);
-    private final Function<String, Response> getTubeById = (id) -> rollerTubeService.getRollerTubeById(id);
-    private final Function<Schema, Response> saveTube = (tube) -> rollerTubeService.createRollerTube((RollerTubeCreation) tube);
-    private final Function<String, Response> deleteTube = (id) -> rollerTubeService.deleteRollerTube(id);
-    private final BiFunction<String, Schema, Response> updateTube = (id, tube) -> rollerTubeService.updateRollerTube(id, (RollerTubeCreation) tube);
+    private final Supplier<Response> getAllTubes =
+            () -> rollerTubeService.getAllRollerTubes();
+    private final Function<String, Response> getTubeByName =
+            (name) -> rollerTubeService.getRollerTubeByName(name);
+    private final Function<String, Response> getTubeById =
+            (id) -> rollerTubeService.getRollerTubeById(id);
+    private final Function<Schema, Response> saveTube =
+            (tube) -> rollerTubeService.createRollerTube((RollerTubeCreation) tube);
+    private final Function<String, Response> deleteTube =
+            (id) -> rollerTubeService.deleteRollerTube(id);
+    private final BiFunction<String, Schema, Response> updateTube =
+            (id, tube) -> rollerTubeService.updateRollerTube(id, (RollerTubeCreation) tube);
 
-    private final Supplier<Response> getAllFabrics = () -> fabricService.getAllRollerFabrics();
-    private final Function<String, Response> getFabricByName = (name) -> fabricService.getRollerFabricByName(name);
-    private final Function<String, Response> getFabricById = (id) -> fabricService.getRollerFabricById(id);
-    private final Function<Schema, Response> saveFabric = (fabric) -> fabricService.createRollerFabric((RollerFabricCreation) fabric);
-    private final Function<String, Response> deleteFabric = (id) -> fabricService.deleteRollerFabric(id);
-    private final BiFunction<String, Schema, Response> updateFabric = (id, fabric) -> fabricService.updateRollerFabric(id, (RollerFabricCreation) fabric);
+    private final Supplier<Response> getAllFabrics =
+            () -> fabricService.getAllRollerFabrics();
+    private final Function<String, Response> getFabricByName =
+            (name) -> fabricService.getRollerFabricByName(name);
+    private final Function<String, Response> getFabricById =
+            (id) -> fabricService.getRollerFabricById(id);
+    private final Function<Schema, Response> saveFabric =
+            (fabric) -> fabricService.createRollerFabric((RollerFabricCreation) fabric);
+    private final Function<String, Response> deleteFabric =
+            (id) -> fabricService.deleteRollerFabric(id);
+    private final BiFunction<String, Schema, Response> updateFabric =
+            (id, fabric) -> fabricService.updateRollerFabric(id, (RollerFabricCreation) fabric);
+
+    private final Supplier<Response> getAllBottomRails =
+            () -> bottomRailService.getAllBottomRails();
+    private final Function<String, Response> getBottomRailByName =
+            (name) -> bottomRailService.getBottomRailByName(name);
+    private final Function<String, Response> getBottomRailById =
+            (id) -> bottomRailService.getBottomRailById(id);
+    private final Function<Schema, Response> saveBottomRail =
+            (bottomRail) -> bottomRailService.saveBottomRail((BottomRailCreation) bottomRail);
+    private final Function<String, Response> deleteBottomRail =
+            (id) -> bottomRailService.deleteBottomRail(id);
+    private final BiFunction<String, Schema, Response> updateBottomRail =
+            (id, bottomRail) -> bottomRailService.updateBottomRail(id, (BottomRailCreation) bottomRail);
+
 
 
     @PostMapping("/{serviceName}/save")
@@ -51,6 +80,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> request(saveTube, object);
             case "fabric" -> request(saveFabric, object);
+            case "bottomrail" -> request(saveBottomRail, object);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -60,6 +90,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> getAll(getAllTubes);
             case "fabric" -> getAll(getAllFabrics);
+            case "bottomrail" -> getAll(getAllBottomRails);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -69,6 +100,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeByName, name);
             case "fabric" -> getByParam(getFabricByName, name);
+            case "bottomrail" -> getByParam(getBottomRailByName, name);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -78,6 +110,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeById, id);
             case "fabric" -> getByParam(getFabricById, id);
+            case "bottomrail" -> getByParam(getBottomRailById, id);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -87,6 +120,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> getByParam(deleteTube, id);
             case "fabric" -> getByParam(deleteFabric, id);
+            case "bottomrail" -> getByParam(deleteBottomRail, id);
             default -> factory.createBadRequestResponse();
         };
     }
@@ -96,6 +130,7 @@ public class ComponentController extends MainController {
         return switch (serviceName) {
             case "tube" -> getByTwoParam(updateTube, id, object);
             case "fabric" -> getByTwoParam(updateFabric, id, object);
+            case "bottomrail" -> getByTwoParam(updateBottomRail, id, object);
             default -> factory.createBadRequestResponse();
         };
     }

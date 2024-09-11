@@ -22,5 +22,6 @@ import lombok.NoArgsConstructor;
 public class RollerFabricCreation implements Schema{
     private String name;
     private Measurement thickness;
+    private Measurement weight;
 
 }

@@ -1,7 +1,6 @@
 package com.vertilux.shadeCalculator.utils;
 
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.measurements.MeasurementUnit;
 import com.vertilux.shadeCalculator.models.measurements.UnitConversion;
 import com.vertilux.shadeCalculator.repositories.ConversionRepo;
 import org.springframework.stereotype.Component;
@@ -28,21 +27,25 @@ public class MeasurementConverter {
      * @param to the unit to convert to
      * @return the converted value, or -1 if the conversion is not possible
      */
-    public Measurement convert(Measurement from, MeasurementUnit to) {
-        double result = -1;
+    public Measurement convert(Measurement from, String to) {
+        Measurement result = Measurement.builder().value(-1).build();
 
-        UnitConversion conversion = conversions.stream()
-                .filter(c -> c.getFromUnit().toString().equals(from.getUnit()) && c.getToUnit().equals(to))
-                .findFirst()
-                .orElse(null);
-
-        if (conversion != null) {
-            result = from.getValue() * conversion.getConversionFactor();
+        if (!from.getUnit().equals(to)) {
+            UnitConversion conversion = conversions.stream()
+                    .filter(c -> c.getFrom().getUnit().equals(from.getUnit())
+                            && c.getTo().getUnit().equals(to))
+                    .findFirst()
+                    .orElse(null);
+            if (conversion != null) {
+                double value = from.getValue() * conversion.getFactor();
+                result = Measurement.builder()
+                        .value(value)
+                        .unit(to)
+                        .build();
+            }
+        } else {
+            result = from;
         }
-
-        return Measurement.builder()
-                .value(result)
-                .unit(to.toString())
-                .build();
+        return result;
     }
 }

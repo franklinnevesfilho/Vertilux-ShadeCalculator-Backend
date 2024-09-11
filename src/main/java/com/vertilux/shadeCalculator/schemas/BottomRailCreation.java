@@ -1,26 +1,16 @@
 package com.vertilux.shadeCalculator.schemas;
 
-
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-/**
- * <h1>RollerShadeSystemCreation</h1>
- *
- * This class represents the schema needed to create a RollerShadeSystem.
- *
- * @author Franklin Neves Filho
- */
-
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
-public class RollerShadeSystemCreation implements Schema {
+public class BottomRailCreation implements  Schema{
     private String name;
-    private Measurement maxDiameter;
+    private Measurement weight;
 }

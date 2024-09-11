@@ -17,5 +17,5 @@ import java.util.Optional;
  */
 @Repository
 public interface ConversionRepo extends JpaRepository<UnitConversion, String> {
-    Optional<UnitConversion> findByFromUnitAndToUnit(MeasurementUnit fromUnit, MeasurementUnit toUnit);
+    Optional<UnitConversion> findByFromAndTo(MeasurementUnit fromUnit, MeasurementUnit toUnit);
 }

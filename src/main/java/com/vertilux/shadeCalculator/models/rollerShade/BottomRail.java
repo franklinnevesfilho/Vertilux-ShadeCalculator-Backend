@@ -1,5 +1,6 @@
 package com.vertilux.shadeCalculator.models.rollerShade;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import jakarta.persistence.*;
@@ -8,28 +9,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Data
 @Entity
-@Table(name="roller_shade_fabric")
-public class RollerFabric {
+@Data
+@Table(name="bottom_rails")
+public class BottomRail {
     @Transient
     private MeasurementConverter measurementConverter;
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String name;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "thickness_value")),
-            @AttributeOverride(name = "unit", column = @Column(name = "thickness_unit"))
-    })
-    private Measurement thickness;
 
     @Embedded
     @AttributeOverrides({
@@ -38,20 +33,18 @@ public class RollerFabric {
     })
     private Measurement weight;
 
-    public Measurement getWeightKg(Measurement width, Measurement drop){
+    public Measurement getWeightKg(Measurement width) {
         Measurement result = Measurement.builder().value(-1).build();
 
-        Measurement currWeight = measurementConverter.convert(weight, "kg/m");
+        Measurement currWeight = measurementConverter.convert(this.weight, "kg/m");
         width = measurementConverter.convert(width, "m");
-        drop = measurementConverter.convert(drop, "m");
 
-        if(currWeight.getValue() != -1 && width.getValue() != -1 && drop.getValue() != -1){
+        if (currWeight.getValue() != -1 && width.getValue() != -1) {
             result = Measurement.builder()
-                    .value(currWeight.getValue() * width.getValue() * drop.getValue())
+                    .value(currWeight.getValue() * width.getValue())
                     .unit("kg")
                     .build();
         }
         return result;
     }
-
 }

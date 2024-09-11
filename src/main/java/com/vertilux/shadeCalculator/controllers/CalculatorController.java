@@ -3,10 +3,13 @@ package com.vertilux.shadeCalculator.controllers;
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.schemas.GetRollUp;
 import com.vertilux.shadeCalculator.schemas.Schema;
+import com.vertilux.shadeCalculator.schemas.ShadeProposal;
 import com.vertilux.shadeCalculator.services.CalculatorService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +20,7 @@ import java.util.function.Function;
  * This class handles all the endpoints related to the calculator
  */
 @AllArgsConstructor
+@Slf4j
 @RestController
 @RequestMapping("/calculator")
 public class CalculatorController extends MainController{
@@ -24,9 +28,19 @@ public class CalculatorController extends MainController{
 
     private final Function<Schema, Response> getRollUp = (getRollUp) ->
             calculatorService.getRollUp((GetRollUp)getRollUp);
+    private final Function<Schema, Response> getTubeDeflection = (shadeProposal) ->
+            calculatorService.getTubeDeflection((ShadeProposal) shadeProposal);
 
     @PostMapping("/getRollUp")
-    public ResponseEntity<Response> getRollUp(GetRollUp object){
-        return request(getRollUp, object);
+    public ResponseEntity<Response> getRollUp(@RequestBody GetRollUp rollUp){
+        log.info("Received request to get roll up");
+        return request(getRollUp, rollUp);
     }
+
+    @PostMapping("/tubeDeflection")
+    public ResponseEntity<Response> getTubeDeflection(@RequestBody ShadeProposal shadeProposal){
+        log.info("Received request to get tube deflection");
+        return request(getTubeDeflection, shadeProposal);
+    }
+
 }

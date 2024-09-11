@@ -20,5 +20,5 @@ import lombok.NoArgsConstructor;
 public class ConversionCreation implements Schema {
     private String from;
     private String to;
-    private double rate;
+    private double factor;
 }

@@ -1,7 +1,8 @@
 package com.vertilux.shadeCalculator;
 
-import com.vertilux.shadeCalculator.schemas.ConversionCreation;
-import com.vertilux.shadeCalculator.services.MeasurementService;
+import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.schemas.*;
+import com.vertilux.shadeCalculator.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,7 @@ public class ShadeCalculatorBackendApplication {
     }
 
     @Bean
-    CommandLineRunner run(MeasurementService measurementService){
+    CommandLineRunner run(MeasurementService measurementService, BottomRailService bottomRailService, RollerFabricService rollerFabricService, RollerShadeService rollerShadeService) {
         return args -> {
             String devMode = System.getenv("DEV_MODE");
 
@@ -29,44 +30,154 @@ public class ShadeCalculatorBackendApplication {
             } else {
                 log.info("Running in development mode...");
                 createConversions(measurementService);
+                createBottomRails(bottomRailService);
+                createRollerFabrics(rollerFabricService);
+                createRollerShadeSystems(rollerShadeService);
             }
 
             log.info("Shade Calculator Backend Application is running...");
         };
     }
 
+    protected void createRollerShadeSystems(RollerShadeService rollerShadeService){
+        List<RollerShadeSystemCreation> rollerShadeSystems = List.of(
+                RollerShadeSystemCreation.builder()
+                        .name("Cassette 100")
+                        .maxDiameter(Measurement.builder()
+                                .value(65)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build()
+        );
+
+        rollerShadeSystems.forEach(rollerShadeService::save);
+    }
+    protected void createRollerTubes(RollerTubeService rollerTubeService){
+        List<RollerTubeCreation> rollerTubes = List.of(
+                RollerTubeCreation.builder()
+                        .name("32mm")
+                        .build()
+        );
+
+        rollerTubes.forEach(rollerTubeService::createRollerTube);
+
+    }
+    protected void createRollerFabrics(RollerFabricService rollerFabricService){
+        List<RollerFabricCreation> rollerFabrics = List.of(
+                RollerFabricCreation.builder()
+                        .name("Light-demo")
+                        .weight(Measurement.builder()
+                                .value(210)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.3)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerFabricCreation.builder()
+                        .name("Medium-demo")
+                        .weight(Measurement.builder()
+                                .value(410)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.5)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerFabricCreation.builder()
+                        .name("Heavy-demo")
+                        .weight(Measurement.builder()
+                                .value(610)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.7)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build()
+        );
+
+        rollerFabrics.forEach(rollerFabricService::createRollerFabric);
+
+    }
+    protected void createBottomRails(BottomRailService bottomRailService){
+        List<BottomRailCreation> bottomRails = List.of(
+                BottomRailCreation.builder()
+                        .name("Euro Slim")
+                        .weight(Measurement.builder()
+                                        .value(1.15)
+                                        .unit("kg/m")
+                                        .build()
+                        )
+                        .build()
+        );
+
+        bottomRails.forEach(bottomRailService::saveBottomRail);
+
+    }
     protected void createConversions(MeasurementService measurementService){
 
         List< ConversionCreation > conversions = List.of(
                 ConversionCreation.builder()
+                        .from("mm")
+                        .to("m")
+                        .factor(0.001)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("m")
+                        .to("mm")
+                        .factor(1000)
+                        .build(),
+                ConversionCreation.builder()
                         .from("cm")
-                        .to("in")
-                        .rate(0.393701)
+                        .to("m")
+                        .factor(0.01)
                         .build(),
                 ConversionCreation.builder()
-                        .from("in")
+                        .from("m")
                         .to("cm")
-                        .rate(2.54)
+                        .factor(100)
+                        .build(),
+                // weight conversions
+                ConversionCreation.builder()
+                        .from("kg/m")
+                        .to("g/m")
+                        .factor(1000)
                         .build(),
                 ConversionCreation.builder()
-                        .from("m")
-                        .to("ft")
-                        .rate(3.28084)
+                        .from("kg")
+                        .to("N")
+                        .factor(9.81)
                         .build(),
                 ConversionCreation.builder()
-                        .from("ft")
-                        .to("m")
-                        .rate(0.3048)
+                        .from("g/m")
+                        .to("kg/m")
+                        .factor(0.001)
                         .build(),
                 ConversionCreation.builder()
-                        .from("m")
-                        .to("yd")
-                        .rate(1.09361)
+                        .from("g/m2")
+                        .to("g/mm2")
+                        .factor(0.000001)
                         .build(),
                 ConversionCreation.builder()
-                        .from("yd")
-                        .to("m")
-                        .rate(0.9144)
+                        .from("g/m2")
+                        .to("kg/m2")
+                        .factor(0.001)
+                        .build(),
+                // modulus of elasticity conversions
+                ConversionCreation.builder()
+                        .from("GPa")
+                        .to("N/mm2")
+                        .factor(1000)
                         .build()
         );
 

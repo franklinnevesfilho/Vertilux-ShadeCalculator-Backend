@@ -24,6 +24,4 @@ public class RollerTubeCreation {
     private String name;
     private Measurement outerDiameter;
     private Measurement innerDiameter;
-    private Measurement modulus;
-    private Measurement density;
 }

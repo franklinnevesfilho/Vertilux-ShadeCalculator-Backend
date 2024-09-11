@@ -1,5 +1,6 @@
 package com.vertilux.shadeCalculator.models.measurements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,15 +15,16 @@ import lombok.NoArgsConstructor;
 @Table(name="unit_conversions")
 public class UnitConversion {
     @Id
+    @JsonIgnore
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
-    private MeasurementUnit fromUnit;
+    private MeasurementUnit from;
 
     @ManyToOne
-    private MeasurementUnit toUnit;
+    private MeasurementUnit to;
 
-    private double conversionFactor;
+    private double factor;
 }

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * RollerFabricService
@@ -43,7 +42,7 @@ public class RollerFabricService extends MainService {
      * @return Response object with the found RollerFabric
      */
     public Response getRollerFabricByName(String fabricName) {
-        RollerFabric found = rollerFabricRepo.findByName(fabricName);
+        RollerFabric found = rollerFabricRepo.findByName(fabricName).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -84,9 +83,9 @@ public class RollerFabricService extends MainService {
      * @return Response object with the created RollerFabric
      */
     public Response createRollerFabric(RollerFabricCreation fabric) {
-        Optional<RollerFabric> found = Optional.ofNullable(rollerFabricRepo.findByName(fabric.getName()));
+        RollerFabric found = rollerFabricRepo.findByName(fabric.getName()).orElse(null);
 
-        if (found.isPresent()) {
+        if (found != null) {
             return Response.builder()
                     .errors(List.of("Fabric already exists"))
                     .status("error")
@@ -96,6 +95,7 @@ public class RollerFabricService extends MainService {
             RollerFabric created = rollerFabricRepo.save(RollerFabric.builder()
                     .name(fabric.getName())
                     .thickness(fabric.getThickness())
+                    .weight(fabric.getWeight())
                     .build());
 
             return Response.builder()
@@ -138,7 +138,7 @@ public class RollerFabricService extends MainService {
      */
 
     public Response deleteRollerFabric(String fabricName) {
-        RollerFabric found = rollerFabricRepo.findByName(fabricName);
+        RollerFabric found = rollerFabricRepo.findByName(fabricName).orElse(null);
         if (found != null) {
             rollerFabricRepo.delete(found);
             return Response.builder()

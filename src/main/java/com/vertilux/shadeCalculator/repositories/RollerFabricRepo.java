@@ -4,6 +4,8 @@ import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * RollerFabricRepo
  * <p>
@@ -18,5 +20,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RollerFabricRepo extends JpaRepository<RollerFabric, String> {
-    RollerFabric findByName(String fabricName);
+    Optional<RollerFabric> findByName(String fabricName);
 }

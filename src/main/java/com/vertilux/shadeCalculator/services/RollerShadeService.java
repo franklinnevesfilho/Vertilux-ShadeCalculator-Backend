@@ -41,6 +41,7 @@ public class RollerShadeService extends MainService {
      * @return A Response object with the saved RollerShadeSystem
      */
     public Response save(RollerShadeSystemCreation system) {
+        log.info("Saving system: {}", system);
         Response response;
 
         Optional<RollerShadeSystem> found = rollerShadeRepo.findByName(system.getName());
@@ -50,6 +51,7 @@ public class RollerShadeService extends MainService {
         } else {
             RollerShadeSystem newSystem = RollerShadeSystem.builder()
                     .name(system.getName())
+                    .maxDiameter(system.getMaxDiameter())
                     .build();
             RollerShadeSystem savedSystem = rollerShadeRepo.save(newSystem);
             return Response.builder().data(mapToJson(savedSystem)).build();

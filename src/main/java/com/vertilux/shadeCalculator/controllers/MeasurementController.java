@@ -22,7 +22,8 @@ import java.util.function.Supplier;
  */
 
 @AllArgsConstructor
-@RestController("/measurement")
+@RestController
+@RequestMapping("/measurement")
 public class MeasurementController extends MainController{
     private MeasurementService measurementService;
 
@@ -73,7 +74,7 @@ public class MeasurementController extends MainController{
     }
 
     @DeleteMapping("/conversion")
-    public ResponseEntity<Response> deleteConversion(@PathParam("from") String id){
+    public ResponseEntity<Response> deleteConversion(@PathParam("id") String id){
         return getByParam(deleteConversion, id);
     }
 
