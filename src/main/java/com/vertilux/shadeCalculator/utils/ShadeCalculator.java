@@ -198,10 +198,6 @@ public class ShadeCalculator {
 
             Measurement currWidth = Measurement.builder().value(0).unit("mm").build();
             Measurement deflection = Measurement.builder().value(0).unit("mm").build();
-            while(deflection.getValue() < maxDeflection + tolerance &&
-                    deflection.getValue() > maxDeflection - tolerance){
-
-            }
         }
 
         return SystemLimitResponse.builder()
