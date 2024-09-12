@@ -5,7 +5,7 @@ import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import com.vertilux.shadeCalculator.models.measurements.MeasurementUnit;
 import com.vertilux.shadeCalculator.models.measurements.UnitConversion;
 import com.vertilux.shadeCalculator.repositories.ConversionRepo;
-import com.vertilux.shadeCalculator.repositories.MeasurementRepo;
+import com.vertilux.shadeCalculator.repositories.UnitRepo;
 import com.vertilux.shadeCalculator.schemas.ConversionCreation;
 import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Service
 public class MeasurementService extends MainService{
-    private final MeasurementRepo measurementRepo;
+    private final UnitRepo measurementRepo;
     private final ConversionRepo conversionRepo;
     private final MeasurementConverter measurementConverter;
 
@@ -38,7 +38,6 @@ public class MeasurementService extends MainService{
      */
     public Response getAllUnits(){
         List<MeasurementUnit> units = measurementRepo.findAll();
-        log.info("Units: {}", units.stream().toList());
 
         return Response.builder()
                 .data(mapToJson(measurementRepo.findAll()))

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +16,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="roller_shade_fabric")
 public class RollerFabric {
-    @Transient
-    private MeasurementConverter measurementConverter;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -37,21 +35,4 @@ public class RollerFabric {
             @AttributeOverride(name = "unit", column = @Column(name = "weight_unit"))
     })
     private Measurement weight;
-
-    public Measurement getWeightKg(Measurement width, Measurement drop){
-        Measurement result = Measurement.builder().value(-1).build();
-
-        Measurement currWeight = measurementConverter.convert(weight, "kg/m");
-        width = measurementConverter.convert(width, "m");
-        drop = measurementConverter.convert(drop, "m");
-
-        if(currWeight.getValue() != -1 && width.getValue() != -1 && drop.getValue() != -1){
-            result = Measurement.builder()
-                    .value(currWeight.getValue() * width.getValue() * drop.getValue())
-                    .unit("kg")
-                    .build();
-        }
-        return result;
-    }
-
 }

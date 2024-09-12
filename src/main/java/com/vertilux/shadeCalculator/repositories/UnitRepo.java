@@ -13,6 +13,6 @@ import java.util.Optional;
  */
 
 @Repository
-public interface MeasurementRepo extends JpaRepository<MeasurementUnit, String> {
+public interface UnitRepo extends JpaRepository<MeasurementUnit, String> {
     Optional<MeasurementUnit> findByUnit(String unit);
 }
