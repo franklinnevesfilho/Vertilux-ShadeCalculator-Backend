@@ -21,7 +21,13 @@ public class ShadeCalculatorBackendApplication {
     }
 
     @Bean
-    CommandLineRunner run(MeasurementService measurementService, BottomRailService bottomRailService, RollerFabricService rollerFabricService, RollerShadeService rollerShadeService) {
+    CommandLineRunner run(
+            MeasurementService measurementService,
+            BottomRailService bottomRailService,
+            RollerFabricService rollerFabricService,
+            RollerShadeService rollerShadeService,
+            RollerTubeService rollerTubeService
+    ) {
         return args -> {
             String devMode = System.getenv("DEV_MODE");
 
@@ -33,6 +39,7 @@ public class ShadeCalculatorBackendApplication {
                 createBottomRails(bottomRailService);
                 createRollerFabrics(rollerFabricService);
                 createRollerShadeSystems(rollerShadeService);
+                createRollerTubes(rollerTubeService);
             }
 
             log.info("Shade Calculator Backend Application is running...");
@@ -56,7 +63,95 @@ public class ShadeCalculatorBackendApplication {
     protected void createRollerTubes(RollerTubeService rollerTubeService){
         List<RollerTubeCreation> rollerTubes = List.of(
                 RollerTubeCreation.builder()
-                        .name("32mm")
+                        .name("28mm")
+                        .innerDiameter(Measurement.builder()
+                                .value(26.79)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(27.1)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("32mm LGH")
+                        .innerDiameter(Measurement.builder()
+                                .value(30)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(32)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("32mm STD")
+                        .innerDiameter(Measurement.builder()
+                                .value(32.6)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(30)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("38mm STD")
+                        .innerDiameter(Measurement.builder()
+                                .value(35.89)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(38.43)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("38mm HD")
+                        .outerDiameter(Measurement.builder()
+                                .value(40.3)
+                                .unit("mm")
+                                .build()
+                        )
+                        .innerDiameter(Measurement.builder()
+                                .value(35.9)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("45mm")
+                        .innerDiameter(Measurement.builder()
+                                .value(41.5)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(45)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("50mm")
+                        .innerDiameter(Measurement.builder()
+                                .value(47)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(51.25)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
