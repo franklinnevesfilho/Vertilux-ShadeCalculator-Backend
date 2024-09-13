@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class SystemLimitRequest implements Schema{
     private String systemName;
     private String fabricName;
-    private String tubeName;
 }

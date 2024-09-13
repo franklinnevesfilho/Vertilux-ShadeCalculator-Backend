@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 public class SystemLimitResponse {
     private String systemName;
-    private RollerTubeResponse tube;
     private RollerFabricResponse fabric;
-    private List<SystemLimits> limits;
+    private List<SystemLimit> limits;
 }

@@ -6,12 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
-public class SystemLimits {
-    private Measurement width;
-    private Measurement drop;
+public class SystemLimit {
+    private RollerTubeResponse tube;
+    private Measurement maxDrop;
+    private Measurement maxWidth;
     private Measurement deflection;
 }

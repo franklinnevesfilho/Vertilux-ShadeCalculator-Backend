@@ -6,10 +6,9 @@ import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
 import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
-import com.vertilux.shadeCalculator.schemas.RollerFabricResponse;
+import com.vertilux.shadeCalculator.repositories.RollerTubeRepo;
 import com.vertilux.shadeCalculator.schemas.RollerTubeResponse;
-import com.vertilux.shadeCalculator.schemas.SystemLimitResponse;
-import com.vertilux.shadeCalculator.schemas.SystemLimits;
+import com.vertilux.shadeCalculator.schemas.SystemLimit;
 import com.vertilux.shadeCalculator.services.BottomRailService;
 import com.vertilux.shadeCalculator.services.RollerFabricService;
 import lombok.AllArgsConstructor;
@@ -33,6 +32,7 @@ public class ShadeCalculator {
     private BottomRailRepo bottomRailRepo;
     private BottomRailService bottomRailService;
     private RollerFabricService fabricService;
+    private RollerTubeRepo tubeRepo;
 
     /**
      * This method calculates the roll up of a shade.
@@ -79,7 +79,7 @@ public class ShadeCalculator {
 
             maxDropValue = (Math.PI * ((maxRollupSquared - tubeOuterDiameterSquared) / 4)) / (fabricThickness.getValue());
         }
-        log.info("Max Drop: {}{}", maxDropValue, "mm");
+        log.info("Max Drop: {} {}", maxDropValue/1000, "m");
         return Measurement.builder()
                 .value(maxDropValue)
                 .unit("mm")
@@ -180,6 +180,22 @@ public class ShadeCalculator {
     }
 
     /**
+     * Get all the system limits for all tubes
+     * @param system the system chosen
+     * @param fabric the fabric chosen
+     * @return a list of all system limits
+     */
+    public List<SystemLimit> getAllSystemLimits(String unit, RollerShadeSystem system, RollerFabric fabric) {
+        List<SystemLimit> systemLimits = new ArrayList<>();
+        List<RollerTube> tubes = tubeRepo.findAll();
+        for (RollerTube tube : tubes) {
+            SystemLimit systemLimit = getSystemLimit(unit, system, fabric, tube);
+            systemLimits.add(systemLimit);
+        }
+        return systemLimits;
+    }
+
+    /**
      * This method calculates the system limit of a shade.
      * The system limit is the maximum width, and drop that a shade can have,
      * based on the tube, fabric, and system type.
@@ -188,23 +204,87 @@ public class ShadeCalculator {
      * @param tube the tube chosen
      * @return All information about the system limit
      */
-    public SystemLimitResponse getSystemLimit(RollerShadeSystem system, RollerFabric fabric, RollerTube tube) {
-        List<SystemLimits> limits = new ArrayList<>();
-        float maxDeflection = 2.99f;
-        float tolerance = 0.01f;
+    public SystemLimit getSystemLimit(String unit, RollerShadeSystem system, RollerFabric fabric, RollerTube tube) {
+        byte maxDeflection = 3;
 
+        Measurement currWidth = Measurement.builder().value(0).unit("mm").build();
+        Measurement deflection = Measurement.builder().value(0).unit("mm").build();
         Measurement drop = getMaxDrop(system.getMaxDiameter(), tube.getOuterDiameter(), fabric.getThickness());
         if( drop.getValue() != -1){
 
-            Measurement currWidth = Measurement.builder().value(0).unit("mm").build();
-            Measurement deflection = Measurement.builder().value(0).unit("mm").build();
+            Measurement prevWidth = currWidth;
+            Measurement prevDeflection = deflection;
+            while(deflection.getValue() < maxDeflection){
+
+                double diff = prevDeflection.getValue() - maxDeflection;
+                int step;
+
+                if(diff > 1){
+                    step = 20;
+                }else if (diff > 0.5){
+                    step = 10;
+                } else {
+                    step = 5;
+                }
+
+                currWidth = Measurement.builder()
+                        .value(currWidth.getValue() + step) // increase by 10mm
+                        .unit(currWidth.getUnit())
+                        .build();
+
+                deflection = getTubeDeflection(fabric, tube, currWidth, drop);
+
+                if (deflection.getValue() > maxDeflection){
+                    currWidth = prevWidth;
+                    deflection = prevDeflection;
+                    break;
+                }else{
+                    prevWidth = currWidth;
+                    prevDeflection = deflection;
+                }
+
+            }
         }
 
-        return SystemLimitResponse.builder()
-                .systemName(system.getName())
-                .tube(RollerTubeResponse.getRollerTubeResponse(tube))
-                .fabric(RollerFabricResponse.getRollerFabricResponse(fabric))
-                .limits(limits)
+        currWidth = roundMeasurement(
+                measurementConverter.convert(currWidth, unit)
+        );
+        drop = roundMeasurement(
+                measurementConverter.convert(drop, unit)
+        );
+
+        if(unit.equals("m")){
+            deflection = roundMeasurement(
+                    measurementConverter.convert(deflection, "mm")
+            );
+        }else if (unit.equals("ft")){
+            deflection = roundMeasurement(
+                    measurementConverter.convert(deflection, "in")
+            );
+        }else{
+            deflection = roundMeasurement(deflection);
+        }
+
+
+        return SystemLimit.builder()
+                .maxWidth(currWidth)
+                .maxDrop(drop)
+                .tube(RollerTubeResponse.builder()
+                        .name(tube.getName())
+                        .build())
+                .deflection(deflection)
+                .build();
+    }
+
+    /**
+     * Round a measurement to 2 decimal places
+     * @param measurement the measurement to round
+     * @return the rounded measurement
+     */
+    private Measurement roundMeasurement(Measurement measurement) {
+        return Measurement.builder()
+                .value(Math.round(measurement.getValue() * 100.0) / 100.0)
+                .unit(measurement.getUnit())
                 .build();
     }
 

@@ -63,7 +63,7 @@ public class ShadeCalculatorBackendApplication {
     protected void createRollerTubes(RollerTubeService rollerTubeService){
         List<RollerTubeCreation> rollerTubes = List.of(
                 RollerTubeCreation.builder()
-                        .name("28mm")
+                        .name("28mm - 1 1/8\"")
                         .innerDiameter(Measurement.builder()
                                 .value(26.79)
                                 .unit("mm")
@@ -76,7 +76,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("32mm LGH")
+                        .name("32mm - 1 1/4\" LGH")
                         .innerDiameter(Measurement.builder()
                                 .value(30)
                                 .unit("mm")
@@ -89,7 +89,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("32mm STD")
+                        .name("32mm - 1 1/4\" STD")
                         .innerDiameter(Measurement.builder()
                                 .value(30)
                                 .unit("mm")
@@ -102,7 +102,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("38mm STD")
+                        .name("38mm - 1 1/2\" STD")
                         .innerDiameter(Measurement.builder()
                                 .value(35.89)
                                 .unit("mm")
@@ -115,7 +115,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("38mm HD")
+                        .name("38mm - 1 1/2\" HD")
                         .outerDiameter(Measurement.builder()
                                 .value(40.3)
                                 .unit("mm")
@@ -128,7 +128,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("45mm")
+                        .name("45mm - 1 3/4\"")
                         .innerDiameter(Measurement.builder()
                                 .value(41.5)
                                 .unit("mm")
@@ -141,7 +141,7 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerTubeCreation.builder()
-                        .name("50mm")
+                        .name("50mm - 2\"")
                         .innerDiameter(Measurement.builder()
                                 .value(47)
                                 .unit("mm")
@@ -241,6 +241,46 @@ public class ShadeCalculatorBackendApplication {
                         .from("m")
                         .to("cm")
                         .factor(100)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("m")
+                        .to("ft")
+                        .factor(3.28084)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("ft")
+                        .to("m")
+                        .factor(0.3048)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("m")
+                        .to("in")
+                        .factor(39.3701)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("in")
+                        .to("m")
+                        .factor(0.0254)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("mm")
+                        .to("in")
+                        .factor(0.0393701)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("in")
+                        .to("mm")
+                        .factor(25.4)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("mm")
+                        .to("ft")
+                        .factor(0.00328084)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("ft")
+                        .to("mm")
+                        .factor(304.8)
                         .build(),
                 // weight conversions
                 ConversionCreation.builder()
