@@ -205,74 +205,53 @@ public class ShadeCalculator {
      * @return All information about the system limit
      */
     public SystemLimit getSystemLimit(String unit, RollerShadeSystem system, RollerFabric fabric, RollerTube tube) {
-        byte maxDeflection = 3;
+        double maxWidth = -1;
+        float maxDeflection = 2.99f;
+        String bottomRail = "Euro Slim";
 
-        Measurement currWidth = Measurement.builder().value(0).unit("mm").build();
-        Measurement deflection = Measurement.builder().value(0).unit("mm").build();
         Measurement drop = getMaxDrop(system.getMaxDiameter(), tube.getOuterDiameter(), fabric.getThickness());
-        if( drop.getValue() != -1){
+        BottomRail basic = bottomRailRepo.findByName(bottomRail).orElse(null);
+        if( drop.getValue() != -1 && basic != null){
+            Measurement dropLimit = Measurement.builder()
+                    .value(3)
+                    .unit("m")
+                    .build();
+            drop = measurementConverter.convert(drop, "m");
 
-            Measurement prevWidth = currWidth;
-            Measurement prevDeflection = deflection;
-            while(deflection.getValue() < maxDeflection){
+            if(drop.getValue() > dropLimit.getValue()){
+                drop = dropLimit;
+            }
 
-                double diff = prevDeflection.getValue() - maxDeflection;
-                int step;
+            Measurement fabricWeight = fabricService.getWeightGm(fabric, drop); // g/m
+            fabricWeight = measurementConverter.convert(fabricWeight, "g/mm"); // g/mm
+            Measurement bottomRailWeight = measurementConverter.convert(basic.getWeight(), "g/mm");
 
-                if(diff > 1){
-                    step = 20;
-                }else if (diff > 0.5){
-                    step = 10;
-                } else {
-                    step = 5;
-                }
+            if(fabricWeight.getValue() != -1 && bottomRailWeight.getValue() != -1){
+                Measurement W = Measurement.builder()
+                        .value((fabricWeight.getValue() + bottomRailWeight.getValue()))
+                        .unit("g")
+                        .build(); // g/mm
 
-                currWidth = Measurement.builder()
-                        .value(currWidth.getValue() + step) // increase by 10mm
-                        .unit(currWidth.getUnit())
-                        .build();
+                W = measurementConverter.convert(W, "N"); // N
+                Measurement I = getMomentOfInertia(tube); // mm^4
+                Measurement E = measurementConverter.convert(tube.getModulus(), "N/mm2"); // N/mm2
 
-                deflection = getTubeDeflection(fabric, tube, currWidth, drop);
-
-                if (deflection.getValue() > maxDeflection){
-                    currWidth = prevWidth;
-                    deflection = prevDeflection;
-                    break;
-                }else{
-                    prevWidth = currWidth;
-                    prevDeflection = deflection;
-                }
-
+                maxWidth = Math.pow((maxDeflection * 384 * E.getValue() * I.getValue()) / ( 5 * W.getValue() ),
+                        (double) 1/4);
             }
         }
-
-        currWidth = roundMeasurement(
-                measurementConverter.convert(currWidth, unit)
-        );
-        drop = roundMeasurement(
-                measurementConverter.convert(drop, unit)
-        );
-
-        if(unit.equals("m")){
-            deflection = roundMeasurement(
-                    measurementConverter.convert(deflection, "mm")
-            );
-        }else if (unit.equals("ft")){
-            deflection = roundMeasurement(
-                    measurementConverter.convert(deflection, "in")
-            );
-        }else{
-            deflection = roundMeasurement(deflection);
-        }
-
+        // Convert measurements to the desired unit
+        drop = measurementConverter.convert(drop, unit);
+        maxWidth = measurementConverter.convert(
+                Measurement.builder().value(maxWidth).unit("mm").build(), unit).getValue();
 
         return SystemLimit.builder()
-                .maxWidth(currWidth)
-                .maxDrop(drop)
+                .maxDrop(roundMeasurement(drop))
+                .maxWidth(roundMeasurement(Measurement.builder().value(maxWidth).unit(unit).build()))
                 .tube(RollerTubeResponse.builder()
                         .name(tube.getName())
                         .build())
-                .deflection(deflection)
+                .deflection(Measurement.builder().value(maxDeflection).unit("mm").build())
                 .build();
     }
 

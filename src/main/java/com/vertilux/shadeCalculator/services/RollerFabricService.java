@@ -176,4 +176,23 @@ public class RollerFabricService extends MainService {
         }
         return result;
     }
+
+    /**
+     * This method will return the weight in g/m
+     * @param fabric The fabric to be calculated
+     * @param length one length of the fabric in M
+     */
+    public Measurement getWeightGm(RollerFabric fabric, Measurement length){
+        Measurement result = Measurement.builder().value(-1).build();
+        Measurement currWeight = measurementConverter.convert(fabric.getWeight(), "g/m2");
+        length = measurementConverter.convert(length, "m");
+
+        if(currWeight.getValue() != -1 && length.getValue() != -1){
+            result = Measurement.builder()
+                    .value(currWeight.getValue() * length.getValue())
+                    .unit("g/m")
+                    .build();
+        }
+        return result;
+    }
 }

@@ -55,6 +55,22 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                RollerShadeSystemCreation.builder()
+                        .name("Cassette 120 flat")
+                        .maxDiameter(Measurement.builder()
+                                .value(83.5)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerShadeSystemCreation.builder()
+                        .name("Cassette 120 round")
+                        .maxDiameter(Measurement.builder()
+                                .value(78)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
@@ -289,13 +305,29 @@ public class ShadeCalculatorBackendApplication {
                         .factor(1000)
                         .build(),
                 ConversionCreation.builder()
+                        .from("kg/m")
+                        .to("g/mm")
+                        .factor(1)
+
+                        .build(),
+                ConversionCreation.builder()
                         .from("kg")
                         .to("N")
                         .factor(9.81)
                         .build(),
                 ConversionCreation.builder()
+                        .from("g")
+                        .to("N")
+                        .factor(0.00981)
+                        .build(),
+                ConversionCreation.builder()
                         .from("g/m")
                         .to("kg/m")
+                        .factor(0.001)
+                        .build(),
+                ConversionCreation.builder()
+                        .from("g/m")
+                        .to("g/mm")
                         .factor(0.001)
                         .build(),
                 ConversionCreation.builder()
