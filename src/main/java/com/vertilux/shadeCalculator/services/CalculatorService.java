@@ -3,8 +3,10 @@ import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
 import com.vertilux.shadeCalculator.repositories.RollerShadeRepo;
+import com.vertilux.shadeCalculator.repositories.RollerTubeRepo;
 import com.vertilux.shadeCalculator.schemas.*;
 import com.vertilux.shadeCalculator.utils.ShadeCalculator;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,7 @@ public class CalculatorService extends MainService{
     private final ShadeCalculator shadeCalculator;
     private final RollerFabricRepo rollerFabricRepo;
     private final RollerShadeRepo rollerShadeRepo;
+    private final RollerTubeRepo rollerTubeRepo;
 
     /**
      * This method returns the roll up of a shade.
@@ -73,6 +76,28 @@ public class CalculatorService extends MainService{
 
         return Response.builder()
                 .data(mapToJson(response))
+                .build();
+    }
+
+    /**
+     * This method returns the deflection of a shade.
+     * @param template The schema with the necessary data to calculate the deflection
+     * @return Response object with the deflection of the shade
+     */
+    public Response getTubeDeflection(ShadeTemplate template) {
+        RollerFabric fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
+        RollerTube tube = rollerTubeRepo.findById(template.getTubeId()).orElse(null);
+
+        if (fabric == null || tube == null) {
+            return Response.builder()
+                    .errors(List.of("Fabric, tube or system not found"))
+                    .build();
+        }
+
+        Measurement deflection = shadeCalculator.getTubeDeflection(fabric, tube, template.getWidth(), template.getDrop());
+
+        return Response.builder()
+                .data(mapToJson(deflection))
                 .build();
     }
 }

@@ -79,7 +79,7 @@ public class ShadeCalculator {
 
             maxDropValue = (Math.PI * ((maxRollupSquared - tubeOuterDiameterSquared) / 4)) / (fabricThickness.getValue());
         }
-        log.info("Max Drop: {} {}", maxDropValue/1000, "m");
+        log.debug("Max Drop: {} {}", maxDropValue/1000, "m");
         return Measurement.builder()
                 .value(maxDropValue)
                 .unit("mm")
@@ -199,6 +199,9 @@ public class ShadeCalculator {
      * This method calculates the system limit of a shade.
      * The system limit is the maximum width, and drop that a shade can have,
      * based on the tube, fabric, and system type.
+     * formula:
+     *
+     *
      * @param system the system chosen
      * @param fabric the fabric chosen
      * @param tube the tube chosen
@@ -245,6 +248,7 @@ public class ShadeCalculator {
         maxWidth = measurementConverter.convert(
                 Measurement.builder().value(maxWidth).unit("mm").build(), unit).getValue();
 
+        log.debug("Max Width: {} {}", maxWidth, unit);
         return SystemLimit.builder()
                 .maxDrop(roundMeasurement(drop))
                 .maxWidth(roundMeasurement(Measurement.builder().value(maxWidth).unit(unit).build()))
