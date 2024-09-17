@@ -1,8 +1,10 @@
 package com.vertilux.shadeCalculator.services;
+import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
 import com.vertilux.shadeCalculator.schemas.RollerFabricCreation;
+import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.List;
 @Service
 public class RollerFabricService extends MainService {
     private final RollerFabricRepo rollerFabricRepo;
+    private final MeasurementConverter measurementConverter;
 
     /**
      * This method returns all the roller fabrics in the database.
@@ -150,5 +153,46 @@ public class RollerFabricService extends MainService {
                     .status("error")
                     .build();
         }
+    }
+
+    /**
+     * This method calculates the weight of the fabric in kg
+     * Not to be used in Controllers
+     * @param width The width of the fabric
+     * @param drop The drop of the fabric
+     * @return The weight of the fabric in kg
+     */
+    public Measurement getWeightKg(RollerFabric fabric, Measurement width, Measurement drop){
+        Measurement result = Measurement.builder().value(-1).build();
+        Measurement currWeight = measurementConverter.convert(fabric.getWeight(), "kg/m2");
+        width = measurementConverter.convert(width, "m");
+        drop = measurementConverter.convert(drop, "m");
+
+        if(currWeight.getValue() != -1 && width.getValue() != -1 && drop.getValue() != -1){
+            result = Measurement.builder()
+                    .value(currWeight.getValue() * width.getValue() * drop.getValue())
+                    .unit("kg")
+                    .build();
+        }
+        return result;
+    }
+
+    /**
+     * This method will return the weight in g/m
+     * @param fabric The fabric to be calculated
+     * @param length one length of the fabric in M
+     */
+    public Measurement getWeightGm(RollerFabric fabric, Measurement length){
+        Measurement result = Measurement.builder().value(-1).build();
+        Measurement currWeight = measurementConverter.convert(fabric.getWeight(), "g/m2");
+        length = measurementConverter.convert(length, "m");
+
+        if(currWeight.getValue() != -1 && length.getValue() != -1){
+            result = Measurement.builder()
+                    .value(currWeight.getValue() * length.getValue())
+                    .unit("g/m")
+                    .build();
+        }
+        return result;
     }
 }

@@ -1,9 +1,11 @@
 package com.vertilux.shadeCalculator.services;
 
 import com.vertilux.shadeCalculator.models.Response;
+import com.vertilux.shadeCalculator.models.measurements.Measurement;
 import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
 import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
 import com.vertilux.shadeCalculator.schemas.BottomRailCreation;
+import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.Optional;
 @Service
 public class BottomRailService extends MainService {
     private final BottomRailRepo bottomRailRepo;
+    private final MeasurementConverter measurementConverter;
 
     /**
      * This method returns all the bottom rails in the database.
@@ -147,5 +150,26 @@ public class BottomRailService extends MainService {
                     .status("error")
                     .build();
         }
+    }
+
+    /**
+     * This method calculates the weight of a bottom rail in kg.
+     * Not to be used in Controllers
+     * @param width The width of the bottom rail
+     * @return The weight of the bottom rail in kg
+     */
+    public Measurement getWeightKg(BottomRail bottomRail, Measurement width) {
+        Measurement result = Measurement.builder().value(-1).build();
+
+        Measurement currWeight = measurementConverter.convert(bottomRail.getWeight(), "kg/m");
+        width = measurementConverter.convert(width, "m");
+
+        if (currWeight.getValue() != -1 && width.getValue() != -1) {
+            result = Measurement.builder()
+                    .value(currWeight.getValue() * width.getValue())
+                    .unit("kg")
+                    .build();
+        }
+        return result;
     }
 }

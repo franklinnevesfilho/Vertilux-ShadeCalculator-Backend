@@ -47,8 +47,8 @@ public class RollerTube {
     @Builder.Default
     private Measurement modulus = Measurement
             .builder()
-            .value(70)
-            .unit("GPa")
+            .value(70000)
+            .unit("N/mm2")
             .build();
 
     @Embedded

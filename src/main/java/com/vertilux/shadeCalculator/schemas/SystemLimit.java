@@ -1,7 +1,6 @@
 package com.vertilux.shadeCalculator.schemas;
 
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ShadeProposal implements Schema{
-    private String fabricName;
-    private String tubeName;
-    private Measurement width;
-    private Measurement drop;
-    private BottomRail bottomRail;
+public class SystemLimit {
+    private RollerTubeResponse tube;
+    private Measurement maxDrop;
+    private Measurement maxWidth;
+    private Measurement deflection;
 }

@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name="bottom_rails")
 public class BottomRail {
-    @Transient
-    private MeasurementConverter measurementConverter;
-
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,19 +29,4 @@ public class BottomRail {
             @AttributeOverride(name = "unit", column = @Column(name = "weight_unit"))
     })
     private Measurement weight;
-
-    public Measurement getWeightKg(Measurement width) {
-        Measurement result = Measurement.builder().value(-1).build();
-
-        Measurement currWeight = measurementConverter.convert(this.weight, "kg/m");
-        width = measurementConverter.convert(width, "m");
-
-        if (currWeight.getValue() != -1 && width.getValue() != -1) {
-            result = Measurement.builder()
-                    .value(currWeight.getValue() * width.getValue())
-                    .unit("kg")
-                    .build();
-        }
-        return result;
-    }
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
  * This repository interface is responsible for handling the database operations for the UnitConversion entity.
  *
  * @see UnitConversion
- * @see MeasurementRepo
+ * @see UnitRepo
  * @author Franklin Neves Filho
  */
 @Repository
