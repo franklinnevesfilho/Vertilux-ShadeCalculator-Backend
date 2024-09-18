@@ -79,7 +79,6 @@ public class ShadeCalculator {
 
             maxDropValue = (Math.PI * ((maxRollupSquared - tubeOuterDiameterSquared) / 4)) / (fabricThickness.getValue());
         }
-        log.debug("Max Drop: {} {}", maxDropValue/1000, "m");
         return Measurement.builder()
                 .value(maxDropValue)
                 .unit("mm")
