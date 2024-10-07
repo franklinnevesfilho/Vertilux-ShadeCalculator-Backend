@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class BottomRailCreation implements  Schema{
     private String name;
+    private String dbId;
     private Measurement weight;
 }

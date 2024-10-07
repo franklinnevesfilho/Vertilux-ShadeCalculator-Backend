@@ -1,8 +1,8 @@
 package com.vertilux.shadeCalculator.utils;
 
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
+import com.vertilux.shadeCalculator.models.rollerShade.BottomRailSet;
+import com.vertilux.shadeCalculator.models.rollerShade.FabricCollection;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
 import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
@@ -116,14 +116,18 @@ public class ShadeCalculator {
      * This method calculates the total load on the tube.
      *
      * @param fabric     The fabric of the shade
-     * @param bottomRail The bottom rail of the shade
+     * @param bottomRailSet The bottom rail of the shade
      * @param width      The width of the shade
      * @param drop       The drop of the shade
      * @return the total load on the tube in the same unit as the drop
      */
-    public Measurement getTotalLoad(RollerFabric fabric, BottomRail bottomRail, Measurement width, Measurement drop) {
+    public Measurement getTotalLoad(FabricCollection fabric, BottomRailSet bottomRailSet, Measurement width, Measurement drop) {
         Measurement result = Measurement.builder().value(-1).build();
         String convertTo = "m";
+
+        width = measurementConverter.convert(width, "in");
+        width = width.getValue() != -1 ? Measurement.builder().value(width.getValue() - 0.125).unit("in").build() : width;
+
         drop = measurementConverter.convert(drop, convertTo);
         width = measurementConverter.convert(width, convertTo);
 
@@ -131,7 +135,7 @@ public class ShadeCalculator {
 
             Measurement fabricWeight = fabricService.getWeightKg(fabric, width, drop);
             fabricWeight = measurementConverter.convert(fabricWeight, "N");
-            Measurement bottomRailWeight = bottomRailService.getWeightKg(bottomRail, width);
+            Measurement bottomRailWeight = bottomRailService.getWeightKg(bottomRailSet, width);
             bottomRailWeight = measurementConverter.convert(bottomRailWeight, "N");
 
             if (fabricWeight.getValue() != -1 && bottomRailWeight.getValue() != -1) {
@@ -156,9 +160,9 @@ public class ShadeCalculator {
      * @param drop The drop of the shade
      * @return the deflection of the tube
      */
-    public Measurement getTubeDeflection(RollerFabric fabric, RollerTube tube, Measurement width, Measurement drop){
+    public Measurement getTubeDeflection(FabricCollection fabric, RollerTube tube, Measurement width, Measurement drop){
         Measurement result = Measurement.builder().value(-1).build();
-        BottomRail basic = bottomRailRepo.findByName("Euro Slim").orElse(null);
+        BottomRailSet basic = bottomRailRepo.findByName("Euro Slim").orElse(null);
         if (basic != null) {
             Measurement l = measurementConverter.convert(width, "mm");
             Measurement E = measurementConverter.convert(tube.getModulus(), "N/mm2");
@@ -178,13 +182,15 @@ public class ShadeCalculator {
         return result;
     }
 
+
+
     /**
      * Get all the system limits for all tubes
      * @param system the system chosen
      * @param fabric the fabric chosen
      * @return a list of all system limits
      */
-    public List<SystemLimit> getAllSystemLimits(String unit, RollerShadeSystem system, RollerFabric fabric) {
+    public List<SystemLimit> getAllSystemLimits(String unit, RollerShadeSystem system, FabricCollection fabric) {
         List<SystemLimit> systemLimits = new ArrayList<>();
         List<RollerTube> tubes = tubeRepo.findAll();
         for (RollerTube tube : tubes) {
@@ -206,13 +212,13 @@ public class ShadeCalculator {
      * @param tube the tube chosen
      * @return All information about the system limit
      */
-    public SystemLimit getSystemLimit(String unit, RollerShadeSystem system, RollerFabric fabric, RollerTube tube) {
+    public SystemLimit getSystemLimit(String unit, RollerShadeSystem system, FabricCollection fabric, RollerTube tube) {
         double maxWidth = -1;
         float maxDeflection = 2.99f;
         String bottomRail = "Euro Slim";
 
         Measurement drop = getMaxDrop(system.getMaxDiameter(), tube.getOuterDiameter(), fabric.getThickness());
-        BottomRail basic = bottomRailRepo.findByName(bottomRail).orElse(null);
+        BottomRailSet basic = bottomRailRepo.findByName(bottomRail).orElse(null);
         if( drop.getValue() != -1 && basic != null){
             Measurement dropLimit = Measurement.builder()
                     .value(3)

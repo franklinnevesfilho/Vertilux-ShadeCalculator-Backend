@@ -2,20 +2,16 @@ package com.vertilux.shadeCalculator.models.rollerShade;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 @Data
-@Table(name="bottom_rails")
-public class BottomRail {
+@Table(name="bottom_rail_sets")
+public class BottomRailSet {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.UUID)

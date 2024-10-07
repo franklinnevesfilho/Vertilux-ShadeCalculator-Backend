@@ -1,21 +1,21 @@
 package com.vertilux.shadeCalculator.models.rollerShade;
 
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @Entity
-@Table(name="roller_shade_fabric")
-public class RollerFabric {
+@Table(name="fabric_collections")
+public class FabricCollection {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -35,4 +35,7 @@ public class RollerFabric {
             @AttributeOverride(name = "unit", column = @Column(name = "weight_unit"))
     })
     private Measurement weight;
+
+    @OneToMany(mappedBy="fabricCollection")
+    private List<Fabric> fabrics;
 }

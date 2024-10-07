@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator.services;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
+import com.vertilux.shadeCalculator.models.rollerShade.FabricCollection;
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
 import com.vertilux.shadeCalculator.schemas.RollerFabricCreation;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * RollerFabricService
  * This class is responsible for handling the business logic for the RollerFabric entity.
- * @see RollerFabric
+ * @see FabricCollection
  * @author Franklin Neves Filho
  */
 
@@ -31,7 +31,7 @@ public class RollerFabricService extends MainService {
      * @return Response object with all the roller fabrics
      */
     public Response getAllRollerFabrics() {
-        List<RollerFabric> rollerFabrics = rollerFabricRepo.findAll();
+        List<FabricCollection> rollerFabrics = rollerFabricRepo.findAll();
 
         return Response.builder()
                 .data(mapToJson(rollerFabrics))
@@ -45,7 +45,7 @@ public class RollerFabricService extends MainService {
      * @return Response object with the found RollerFabric
      */
     public Response getRollerFabricByName(String fabricName) {
-        RollerFabric found = rollerFabricRepo.findByName(fabricName).orElse(null);
+        FabricCollection found = rollerFabricRepo.findByName(fabricName).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -65,7 +65,7 @@ public class RollerFabricService extends MainService {
      * @return Response object with the found RollerFabric
      */
     public Response getRollerFabricById(String fabricId) {
-        RollerFabric found = rollerFabricRepo.findById(fabricId).orElse(null);
+        FabricCollection found = rollerFabricRepo.findById(fabricId).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -86,7 +86,7 @@ public class RollerFabricService extends MainService {
      * @return Response object with the created RollerFabric
      */
     public Response createRollerFabric(RollerFabricCreation fabric) {
-        RollerFabric found = rollerFabricRepo.findByName(fabric.getName()).orElse(null);
+        FabricCollection found = rollerFabricRepo.findByName(fabric.getName()).orElse(null);
 
         if (found != null) {
             return Response.builder()
@@ -95,7 +95,7 @@ public class RollerFabricService extends MainService {
                     .build();
         } else {
 
-            RollerFabric created = rollerFabricRepo.save(RollerFabric.builder()
+            FabricCollection created = rollerFabricRepo.save(FabricCollection.builder()
                     .name(fabric.getName())
                     .thickness(fabric.getThickness())
                     .weight(fabric.getWeight())
@@ -116,11 +116,11 @@ public class RollerFabricService extends MainService {
      * @return Response object with the updated RollerFabric
      */
     public Response updateRollerFabric(String id, RollerFabricCreation fabric) {
-        RollerFabric found = rollerFabricRepo.findById(id).orElse(null);
+        FabricCollection found = rollerFabricRepo.findById(id).orElse(null);
         if (found != null) {
             found.setName(fabric.getName());
             found.setThickness(fabric.getThickness());
-            RollerFabric updated = rollerFabricRepo.save(found);
+            FabricCollection updated = rollerFabricRepo.save(found);
             return Response.builder()
                     .data(mapToJson(updated))
                     .build();
@@ -141,7 +141,7 @@ public class RollerFabricService extends MainService {
      */
 
     public Response deleteRollerFabric(String fabricName) {
-        RollerFabric found = rollerFabricRepo.findByName(fabricName).orElse(null);
+        FabricCollection found = rollerFabricRepo.findByName(fabricName).orElse(null);
         if (found != null) {
             rollerFabricRepo.delete(found);
             return Response.builder()
@@ -162,7 +162,7 @@ public class RollerFabricService extends MainService {
      * @param drop The drop of the fabric
      * @return The weight of the fabric in kg
      */
-    public Measurement getWeightKg(RollerFabric fabric, Measurement width, Measurement drop){
+    public Measurement getWeightKg(FabricCollection fabric, Measurement width, Measurement drop){
         Measurement result = Measurement.builder().value(-1).build();
         Measurement currWeight = measurementConverter.convert(fabric.getWeight(), "kg/m2");
         width = measurementConverter.convert(width, "m");
@@ -182,7 +182,7 @@ public class RollerFabricService extends MainService {
      * @param fabric The fabric to be calculated
      * @param length one length of the fabric in M
      */
-    public Measurement getWeightGm(RollerFabric fabric, Measurement length){
+    public Measurement getWeightGm(FabricCollection fabric, Measurement length){
         Measurement result = Measurement.builder().value(-1).build();
         Measurement currWeight = measurementConverter.convert(fabric.getWeight(), "g/m2");
         length = measurementConverter.convert(length, "m");

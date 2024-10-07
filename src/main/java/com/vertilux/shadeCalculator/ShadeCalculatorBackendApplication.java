@@ -71,6 +71,14 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                RollerShadeSystemCreation.builder()
+                        .name("Axio")
+                        .maxDiameter(Measurement.builder()
+                                .value(70.2)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
@@ -216,6 +224,19 @@ public class ShadeCalculatorBackendApplication {
                         )
                         .build(),
                 RollerFabricCreation.builder()
+                        .name("Medium-demo2")
+                        .weight(Measurement.builder()
+                                .value(350)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.46)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerFabricCreation.builder()
                         .name("Heavy-demo")
                         .weight(Measurement.builder()
                                 .value(610)
@@ -236,11 +257,20 @@ public class ShadeCalculatorBackendApplication {
     protected void createBottomRails(BottomRailService bottomRailService){
         List<BottomRailCreation> bottomRails = List.of(
                 BottomRailCreation.builder()
-                        .name("Euro Slim")
+                        .dbId("0-151-AL-ESX19")
+                        .name("Rollux-Al. Bottomrail Euro Slim 19'")
                         .weight(Measurement.builder()
                                         .value(1.15)
                                         .unit("kg/m")
                                         .build()
+                        )
+                        .build(),
+                BottomRailCreation.builder()
+                        .name("Euro Slim")
+                        .weight(Measurement.builder()
+                                .value(1.15)
+                                .unit("kg/m")
+                                .build()
                         )
                         .build()
         );

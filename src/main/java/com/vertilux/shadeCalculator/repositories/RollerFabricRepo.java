@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator.repositories;
 
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
+import com.vertilux.shadeCalculator.models.rollerShade.FabricCollection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,11 +14,11 @@ import java.util.Optional;
  *     This interface is used by the RollerFabricService class to interact with the database.
  * </p>
  *
- * @see RollerFabric
+ * @see FabricCollection
  * @author Franklin Neves Filho
  */
 
 @Repository
-public interface RollerFabricRepo extends JpaRepository<RollerFabric, String> {
-    Optional<RollerFabric> findByName(String fabricName);
+public interface RollerFabricRepo extends JpaRepository<FabricCollection, String> {
+    Optional<FabricCollection> findByName(String fabricName);
 }

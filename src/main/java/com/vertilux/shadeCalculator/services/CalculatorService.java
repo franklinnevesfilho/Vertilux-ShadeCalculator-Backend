@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.services;
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
+import com.vertilux.shadeCalculator.models.rollerShade.FabricCollection;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
 import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
@@ -55,7 +55,7 @@ public class CalculatorService extends MainService{
      */
     public Response getSystemLimit(String unit, SystemLimitRequest shadeProposal) {
         RollerShadeSystem system = rollerShadeRepo.findByName(shadeProposal.getSystemName()).orElse(null);
-        RollerFabric fabric = rollerFabricRepo.findByName(shadeProposal.getFabricName()).orElse(null);
+        FabricCollection fabric = rollerFabricRepo.findByName(shadeProposal.getFabricName()).orElse(null);
         if (fabric == null || system == null) {
             return Response.builder()
                     .errors(List.of("Fabric, tube or system not found"))
@@ -85,7 +85,7 @@ public class CalculatorService extends MainService{
      * @return Response object with the deflection of the shade
      */
     public Response getTubeDeflection(ShadeTemplate template) {
-        RollerFabric fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
+        FabricCollection fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
         RollerTube tube = rollerTubeRepo.findById(template.getTubeId()).orElse(null);
 
         if (fabric == null || tube == null) {
@@ -100,4 +100,5 @@ public class CalculatorService extends MainService{
                 .data(mapToJson(deflection))
                 .build();
     }
+
 }

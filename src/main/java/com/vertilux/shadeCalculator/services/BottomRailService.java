@@ -2,7 +2,7 @@ package com.vertilux.shadeCalculator.services;
 
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
+import com.vertilux.shadeCalculator.models.rollerShade.BottomRailSet;
 import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
 import com.vertilux.shadeCalculator.schemas.BottomRailCreation;
 import com.vertilux.shadeCalculator.utils.MeasurementConverter;
@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * BottomRailService
  * This class is responsible for handling the business logic for the BottomRail entity.
- * @see BottomRail
+ * @see BottomRailSet
  * @author Franklin Neves Filho
  */
 
@@ -33,10 +33,10 @@ public class BottomRailService extends MainService {
      * @return Response object with all the bottom rails
      */
     public Response getAllBottomRails() {
-        List<BottomRail> bottomRails = bottomRailRepo.findAll();
+        List<BottomRailSet> bottomRailSets = bottomRailRepo.findAll();
 
         return Response.builder()
-                .data(mapToJson(bottomRails))
+                .data(mapToJson(bottomRailSets))
                 .build();
     }
 
@@ -47,7 +47,7 @@ public class BottomRailService extends MainService {
      * @return Response object with the found BottomRail
      */
     public Response getBottomRailByName(String bottomRailName) {
-        BottomRail found = bottomRailRepo.findByName(bottomRailName).orElse(null);
+        BottomRailSet found = bottomRailRepo.findByName(bottomRailName).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -68,7 +68,7 @@ public class BottomRailService extends MainService {
      * @return Response object with the found BottomRail
      */
     public Response getBottomRailById(String bottomRailId) {
-        BottomRail found = bottomRailRepo.findById(bottomRailId).orElse(null);
+        BottomRailSet found = bottomRailRepo.findById(bottomRailId).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -88,7 +88,7 @@ public class BottomRailService extends MainService {
      * @return Response object with the saved BottomRail
      */
     public Response saveBottomRail(BottomRailCreation bottomRail) {
-        Optional<BottomRail> found = bottomRailRepo.findByName(bottomRail.getName());
+        Optional<BottomRailSet> found = bottomRailRepo.findByName(bottomRail.getName());
 
         if (found.isPresent()){
             return Response.builder()
@@ -96,13 +96,13 @@ public class BottomRailService extends MainService {
                     .status("error")
                     .build();
         } else {
-            BottomRail newBottomRail = BottomRail.builder()
+            BottomRailSet newBottomRailSet = BottomRailSet.builder()
                     .name(bottomRail.getName())
                     .weight(bottomRail.getWeight())
                     .build();
-            BottomRail savedBottomRail = bottomRailRepo.save(newBottomRail);
+            BottomRailSet savedBottomRailSet = bottomRailRepo.save(newBottomRailSet);
             return Response.builder()
-                    .data(mapToJson(savedBottomRail))
+                    .data(mapToJson(savedBottomRailSet))
                     .build();
         }
     }
@@ -114,7 +114,7 @@ public class BottomRailService extends MainService {
      * @return Response object with status code 204
      */
     public Response deleteBottomRail(String bottomRailId) {
-        BottomRail found = bottomRailRepo.findById(bottomRailId).orElse(null);
+        BottomRailSet found = bottomRailRepo.findById(bottomRailId).orElse(null);
         if (found != null) {
             bottomRailRepo.deleteById(bottomRailId);
             return Response.builder()
@@ -135,14 +135,14 @@ public class BottomRailService extends MainService {
      * @return Response object with the updated BottomRail
      */
     public Response updateBottomRail(String bottomRailId, BottomRailCreation bottomRail) {
-        Optional<BottomRail> found = bottomRailRepo.findById(bottomRailId);
+        Optional<BottomRailSet> found = bottomRailRepo.findById(bottomRailId);
         if (found.isPresent()) {
-            BottomRail updatedBottomRail = found.get();
-            updatedBottomRail.setName(bottomRail.getName());
-            updatedBottomRail.setWeight(bottomRail.getWeight());
-            BottomRail savedBottomRail = bottomRailRepo.save(updatedBottomRail);
+            BottomRailSet updatedBottomRailSet = found.get();
+            updatedBottomRailSet.setName(bottomRail.getName());
+            updatedBottomRailSet.setWeight(bottomRail.getWeight());
+            BottomRailSet savedBottomRailSet = bottomRailRepo.save(updatedBottomRailSet);
             return Response.builder()
-                    .data(mapToJson(savedBottomRail))
+                    .data(mapToJson(savedBottomRailSet))
                     .build();
         } else {
             return Response.builder()
@@ -158,10 +158,10 @@ public class BottomRailService extends MainService {
      * @param width The width of the bottom rail
      * @return The weight of the bottom rail in kg
      */
-    public Measurement getWeightKg(BottomRail bottomRail, Measurement width) {
+    public Measurement getWeightKg(BottomRailSet bottomRailSet, Measurement width) {
         Measurement result = Measurement.builder().value(-1).build();
 
-        Measurement currWeight = measurementConverter.convert(bottomRail.getWeight(), "kg/m");
+        Measurement currWeight = measurementConverter.convert(bottomRailSet.getWeight(), "kg/m");
         width = measurementConverter.convert(width, "m");
 
         if (currWeight.getValue() != -1 && width.getValue() != -1) {
