@@ -85,8 +85,8 @@ public class CalculatorService extends MainService{
      * @return Response object with the deflection of the shade
      */
     public Response getTubeDeflection(ShadeTemplate template) {
-        RollerFabric fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
-        RollerTube tube = rollerTubeRepo.findById(template.getTubeId()).orElse(null);
+        RollerFabric fabric = rollerFabricRepo.findByName(template.getFabricName()).orElse(null);
+        RollerTube tube = rollerTubeRepo.findByName(template.getTubeName()).orElse(null);
 
         if (fabric == null || tube == null) {
             return Response.builder()

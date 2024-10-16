@@ -8,8 +8,8 @@ import lombok.*;
 @Builder
 @Data
 public class ShadeTemplate implements Schema{
-    private String fabricId;
-    private String tubeId;
+    private String fabricName;
+    private String tubeName;
     private Measurement width;
     private Measurement drop;
 }

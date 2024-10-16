@@ -168,6 +168,19 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("63mm - 2 1/2\"")
+                        .innerDiameter(Measurement.builder()
+                                .value(61.7)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(65.3)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
@@ -192,7 +205,7 @@ public class ShadeCalculatorBackendApplication {
                 RollerFabricCreation.builder()
                         .name("Medium-demo")
                         .weight(Measurement.builder()
-                                .value(410)
+                                .value(420)
                                 .unit("g/m2")
                                 .build()
                         )
