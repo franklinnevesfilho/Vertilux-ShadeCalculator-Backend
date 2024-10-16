@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator.repositories;
 
-import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.ShadeSystem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +15,10 @@ import java.util.Optional;
  *     This interface is used by the RollerShadeService class to interact with the database.
  * </p>
  *
- * @see RollerShadeSystem
+ * @see ShadeSystem
  * @author Franklin Neves Filho
  */
 @Repository
-public interface RollerShadeRepo extends JpaRepository<RollerShadeSystem, String> {
-    Optional<RollerShadeSystem> findByName(String name);
+public interface RollerShadeRepo extends JpaRepository<ShadeSystem, String> {
+    Optional<ShadeSystem> findByName(String name);
 }

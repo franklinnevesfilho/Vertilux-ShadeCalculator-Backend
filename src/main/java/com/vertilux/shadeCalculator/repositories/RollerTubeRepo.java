@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator.repositories;
 
-import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
+import com.vertilux.shadeCalculator.models.rollerShade.Tube;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,11 +14,11 @@ import java.util.Optional;
  *     This interface is used by the RollerTubeService class to interact with the database.
  * </p>
  *
- * @see RollerTube
+ * @see Tube
  * @author Franklin Neves Filho
  */
 
 @Repository
-public interface RollerTubeRepo extends JpaRepository<RollerTube, String> {
-    Optional<RollerTube> findByName(String tubeName);
+public interface RollerTubeRepo extends JpaRepository<Tube, String> {
+    Optional<Tube> findByName(String tubeName);
 }

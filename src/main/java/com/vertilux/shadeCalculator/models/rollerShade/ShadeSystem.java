@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.models.rollerShade;
 
 
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.models.Measurement;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +20,7 @@ import lombok.*;
 @Entity
 @Builder
 @Table(name="roller_systems")
-public class RollerShadeSystem {
+public class ShadeSystem {
 
     @Id
     @Column(name="id")

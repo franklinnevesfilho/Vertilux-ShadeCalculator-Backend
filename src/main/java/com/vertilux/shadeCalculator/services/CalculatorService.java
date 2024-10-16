@@ -1,13 +1,14 @@
 package com.vertilux.shadeCalculator.services;
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
+import com.vertilux.shadeCalculator.models.Measurement;
+import com.vertilux.shadeCalculator.models.rollerShade.Fabric;
+import com.vertilux.shadeCalculator.models.rollerShade.ShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.Tube;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
 import com.vertilux.shadeCalculator.repositories.RollerShadeRepo;
 import com.vertilux.shadeCalculator.repositories.RollerTubeRepo;
 import com.vertilux.shadeCalculator.schemas.*;
+import com.vertilux.shadeCalculator.utils.MeasurementConverter;
 import com.vertilux.shadeCalculator.utils.ShadeCalculator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,18 +32,26 @@ public class CalculatorService extends MainService{
     private final RollerFabricRepo rollerFabricRepo;
     private final RollerShadeRepo rollerShadeRepo;
     private final RollerTubeRepo rollerTubeRepo;
+    private final MeasurementConverter measurementConverter;
 
     /**
      * This method returns the roll up of a shade.
      * @param getRollUp The schema with the necessary data to calculate the roll up
      * @return Response object with the roll up of the shade
      */
-    public Response getRollUp(GetRollUp getRollUp){
+    public Response getRollUp(String unit, GetRollUp getRollUp){
         Measurement rollUp = shadeCalculator.getRollUp(
                 getRollUp.getDrop(),
                 getRollUp.getTubeOuterDiameter(),
                 getRollUp.getFabricThickness()
         );
+
+        Measurement converted = measurementConverter.convert(rollUp, unit);
+
+        if( converted.getValue() != -1){
+            rollUp = converted;
+        }
+
         return Response.builder()
                 .data(mapToJson(rollUp))
                 .build();
@@ -54,8 +63,8 @@ public class CalculatorService extends MainService{
      * @return Response object with the system limits
      */
     public Response getSystemLimit(String unit, SystemLimitRequest shadeProposal) {
-        RollerShadeSystem system = rollerShadeRepo.findByName(shadeProposal.getSystemName()).orElse(null);
-        RollerFabric fabric = rollerFabricRepo.findByName(shadeProposal.getFabricName()).orElse(null);
+        ShadeSystem system = rollerShadeRepo.findByName(shadeProposal.getSystemName()).orElse(null);
+        Fabric fabric = rollerFabricRepo.findByName(shadeProposal.getFabricName()).orElse(null);
         if (fabric == null || system == null) {
             return Response.builder()
                     .errors(List.of("Fabric, tube or system not found"))
@@ -85,8 +94,8 @@ public class CalculatorService extends MainService{
      * @return Response object with the deflection of the shade
      */
     public Response getTubeDeflection(ShadeTemplate template) {
-        RollerFabric fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
-        RollerTube tube = rollerTubeRepo.findById(template.getTubeId()).orElse(null);
+        Fabric fabric = rollerFabricRepo.findByName(template.getFabricId()).orElse(null);
+        Tube tube = rollerTubeRepo.findById(template.getTubeId()).orElse(null);
 
         if (fabric == null || tube == null) {
             return Response.builder()

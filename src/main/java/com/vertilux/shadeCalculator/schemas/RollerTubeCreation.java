@@ -1,6 +1,7 @@
 package com.vertilux.shadeCalculator.schemas;
 
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.models.Measurement;
+import com.vertilux.shadeCalculator.models.rollerShade.Tube;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * This class represents the schema needed to create a RollerTube.
  *
- * @see com.vertilux.shadeCalculator.models.rollerShade.RollerTube
+ * @see Tube
  *
  * @author Franklin Neves Filho
  */

@@ -6,8 +6,8 @@ import com.vertilux.shadeCalculator.schemas.RollerFabricCreation;
 import com.vertilux.shadeCalculator.schemas.RollerTubeCreation;
 import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.services.BottomRailService;
-import com.vertilux.shadeCalculator.services.RollerFabricService;
-import com.vertilux.shadeCalculator.services.RollerTubeService;
+import com.vertilux.shadeCalculator.services.FabricService;
+import com.vertilux.shadeCalculator.services.TubeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,22 +30,22 @@ import java.util.function.Supplier;
 @RestController
 @RequestMapping("/components")
 public class ComponentController extends MainController {
-    private RollerTubeService rollerTubeService;
-    private RollerFabricService fabricService;
+    private TubeService tubeService;
+    private FabricService fabricService;
     private BottomRailService bottomRailService;
 
     private final Supplier<Response> getAllTubes =
-            () -> rollerTubeService.getAllRollerTubes();
+            () -> tubeService.getAllRollerTubes();
     private final Function<String, Response> getTubeByName =
-            (name) -> rollerTubeService.getRollerTubeByName(name);
+            (name) -> tubeService.getRollerTubeByName(name);
     private final Function<String, Response> getTubeById =
-            (id) -> rollerTubeService.getRollerTubeById(id);
+            (id) -> tubeService.getRollerTubeById(id);
     private final Function<Schema, Response> saveTube =
-            (tube) -> rollerTubeService.createRollerTube((RollerTubeCreation) tube);
+            (tube) -> tubeService.createRollerTube((RollerTubeCreation) tube);
     private final Function<String, Response> deleteTube =
-            (id) -> rollerTubeService.deleteRollerTube(id);
+            (id) -> tubeService.deleteRollerTube(id);
     private final BiFunction<String, Schema, Response> updateTube =
-            (id, tube) -> rollerTubeService.updateRollerTube(id, (RollerTubeCreation) tube);
+            (id, tube) -> tubeService.updateRollerTube(id, (RollerTubeCreation) tube);
 
     private final Supplier<Response> getAllFabrics =
             () -> fabricService.getAllRollerFabrics();

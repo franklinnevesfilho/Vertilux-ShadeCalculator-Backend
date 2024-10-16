@@ -3,7 +3,7 @@ package com.vertilux.shadeCalculator.controllers;
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.schemas.RollerShadeSystemCreation;
-import com.vertilux.shadeCalculator.services.RollerShadeService;
+import com.vertilux.shadeCalculator.services.ShadeService;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 @RestController
 @RequestMapping("/roller-shade")
 public class RollerShadeController extends MainController{
-    private RollerShadeService rollerShadeService;
+    private ShadeService rollerShadeService;
 
     private final Supplier<Response> getAll = () -> rollerShadeService.getAll();
     private final Function<Schema, Response> save = (system) -> rollerShadeService.save((RollerShadeSystemCreation) system);

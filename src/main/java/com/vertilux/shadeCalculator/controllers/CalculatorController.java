@@ -25,18 +25,18 @@ import java.util.function.Function;
 public class CalculatorController extends MainController{
     private CalculatorService calculatorService;
 
-    private final Function<Schema, Response> getRollUp = (getRollUp) ->
-            calculatorService.getRollUp((GetRollUp)getRollUp);
+    private final BiFunction<String, Schema, Response> getRollUp = (unit, getRollUp) ->
+            calculatorService.getRollUp(unit, (GetRollUp)getRollUp);
     private final BiFunction<String, Schema, Response> getSystemLimit = (unit, systemLimitRequest) ->
             calculatorService.getSystemLimit(unit, (SystemLimitRequest) systemLimitRequest);
 
     private final Function<Schema, Response> getDeflection = (template) ->
             calculatorService.getTubeDeflection((ShadeTemplate) template);
 
-    @PostMapping("/getRollUp")
-    public ResponseEntity<Response> getRollUp(@RequestBody GetRollUp rollUp){
+    @PostMapping("/getRollUp/{unit}")
+    public ResponseEntity<Response> getRollUp(@PathVariable String unit, @RequestBody GetRollUp rollUp){
         log.info("Received request to get roll up");
-        return request(getRollUp, rollUp);
+        return getByTwoParam(getRollUp, unit, rollUp);
     }
 
     @PostMapping("/systemLimit/{unit}")

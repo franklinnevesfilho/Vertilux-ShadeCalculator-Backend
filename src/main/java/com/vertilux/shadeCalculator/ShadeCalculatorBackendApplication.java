@@ -1,6 +1,6 @@
 package com.vertilux.shadeCalculator;
 
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.models.Measurement;
 import com.vertilux.shadeCalculator.schemas.*;
 import com.vertilux.shadeCalculator.services.*;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ public class ShadeCalculatorBackendApplication {
     CommandLineRunner run(
             MeasurementService measurementService,
             BottomRailService bottomRailService,
-            RollerFabricService rollerFabricService,
-            RollerShadeService rollerShadeService,
-            RollerTubeService rollerTubeService
+            FabricService fabricService,
+            ShadeService rollerShadeService,
+            TubeService tubeService
     ) {
         return args -> {
             String devMode = System.getenv("DEV_MODE");
@@ -37,16 +37,16 @@ public class ShadeCalculatorBackendApplication {
                 log.info("Running in development mode...");
                 createConversions(measurementService);
                 createBottomRails(bottomRailService);
-                createRollerFabrics(rollerFabricService);
+                createRollerFabrics(fabricService);
                 createRollerShadeSystems(rollerShadeService);
-                createRollerTubes(rollerTubeService);
+                createRollerTubes(tubeService);
             }
 
             log.info("Shade Calculator Backend Application is running...");
         };
     }
 
-    protected void createRollerShadeSystems(RollerShadeService rollerShadeService){
+    protected void createRollerShadeSystems(ShadeService rollerShadeService){
         List<RollerShadeSystemCreation> rollerShadeSystems = List.of(
                 RollerShadeSystemCreation.builder()
                         .name("Cassette 100")
@@ -71,12 +71,20 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                RollerShadeSystemCreation.builder()
+                        .name("Euro L")
+                        .maxDiameter(Measurement.builder()
+                                .value(99)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
         rollerShadeSystems.forEach(rollerShadeService::save);
     }
-    protected void createRollerTubes(RollerTubeService rollerTubeService){
+    protected void createRollerTubes(TubeService tubeService){
         List<RollerTubeCreation> rollerTubes = List.of(
                 RollerTubeCreation.builder()
                         .name("28mm - 1 1/8\"")
@@ -168,13 +176,39 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("63 - 2 1/2\"")
+                        .innerDiameter(Measurement.builder()
+                                .value(61.7)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(65.3)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                RollerTubeCreation.builder()
+                        .name("83 - 3 1/4\"")
+                        .innerDiameter(Measurement.builder()
+                                .value(77)
+                                .unit("mm")
+                                .build()
+                        )
+                        .outerDiameter(Measurement.builder()
+                                .value(83)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
-        rollerTubes.forEach(rollerTubeService::createRollerTube);
+        rollerTubes.forEach(tubeService::createRollerTube);
 
     }
-    protected void createRollerFabrics(RollerFabricService rollerFabricService){
+    protected void createRollerFabrics(FabricService fabricService){
         List<RollerFabricCreation> rollerFabrics = List.of(
                 RollerFabricCreation.builder()
                         .name("Light-demo")
@@ -217,7 +251,7 @@ public class ShadeCalculatorBackendApplication {
                         .build()
         );
 
-        rollerFabrics.forEach(rollerFabricService::createRollerFabric);
+        rollerFabrics.forEach(fabricService::createRollerFabric);
 
     }
     protected void createBottomRails(BottomRailService bottomRailService){

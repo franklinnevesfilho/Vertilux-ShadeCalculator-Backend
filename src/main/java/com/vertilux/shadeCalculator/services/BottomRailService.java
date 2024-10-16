@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.services;
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
+import com.vertilux.shadeCalculator.models.Measurement;
 import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
 import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
 import com.vertilux.shadeCalculator.schemas.BottomRailCreation;

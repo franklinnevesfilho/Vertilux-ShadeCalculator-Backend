@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
 @Data
-@Table(name="bottom_rails")
-public class BottomRail {
+@Entity
+@Table(name="roller_tubes")
+public class Tube {
     @Id
     private String id;
     private String description;
 
     @ManyToOne
-    private BottomRailCollection bottomRailCollection;
+    private TubeCollection tubeCollection;
+
 }

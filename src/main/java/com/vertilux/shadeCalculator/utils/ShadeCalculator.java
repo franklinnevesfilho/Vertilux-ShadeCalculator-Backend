@@ -1,16 +1,9 @@
 package com.vertilux.shadeCalculator.utils;
 
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.rollerShade.BottomRail;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerFabric;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
-import com.vertilux.shadeCalculator.repositories.BottomRailRepo;
-import com.vertilux.shadeCalculator.repositories.RollerTubeRepo;
+import com.vertilux.shadeCalculator.models.Measurement;
+import com.vertilux.shadeCalculator.models.rollerShade.*;
 import com.vertilux.shadeCalculator.schemas.RollerTubeResponse;
 import com.vertilux.shadeCalculator.schemas.SystemLimit;
-import com.vertilux.shadeCalculator.services.BottomRailService;
-import com.vertilux.shadeCalculator.services.RollerFabricService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,10 +22,6 @@ import java.util.List;
 @Component
 public class ShadeCalculator {
     private MeasurementConverter measurementConverter;
-    private BottomRailRepo bottomRailRepo;
-    private BottomRailService bottomRailService;
-    private RollerFabricService fabricService;
-    private RollerTubeRepo tubeRepo;
 
     /**
      * This method calculates the roll up of a shade.
@@ -94,13 +83,18 @@ public class ShadeCalculator {
      * @param tube the tube to calculate the moment of inertia
      * @return the moment of inertia of the tube
      */
-    private Measurement getMomentOfInertia(RollerTube tube) {
+    private Measurement getMomentOfInertia(TubeCollection tube) {
         Measurement result = Measurement.builder().value(-1).unit("mm^4").build();
-        Measurement thickness = measurementConverter.convert(tube.getThickness(), "mm");
+
+        Measurement outerDiameter = measurementConverter.convert(tube.getOuterDiameter(), "mm");
         Measurement innerDiameter = measurementConverter.convert(tube.getInnerDiameter(), "mm");
-        innerDiameter = measurementConverter.convert(innerDiameter, "mm");
 
         if (innerDiameter.getValue() != -1){
+            Measurement thickness = Measurement.builder()
+                    .value((outerDiameter.getValue() - innerDiameter.getValue()))
+                    .unit("mm")
+                    .build();
+
             double moment = (Math.PI * ((Math.pow(innerDiameter.getValue(), 4)) -
                                     (Math.pow((innerDiameter.getValue() -
                                             (2 * thickness.getValue())), 4)))) / 64;
@@ -122,7 +116,7 @@ public class ShadeCalculator {
      * @param drop       The drop of the shade
      * @return the total load on the tube in the same unit as the drop
      */
-    public Measurement getTotalLoad(RollerFabric fabric, BottomRail bottomRail, Measurement width, Measurement drop) {
+    public Measurement getTotalLoad(FabricCollection fabric, BottomRailCollection bottomRail, Measurement width, Measurement drop) {
         Measurement result = Measurement.builder().value(-1).build();
         String convertTo = "m";
         drop = measurementConverter.convert(drop, convertTo);
@@ -130,14 +124,16 @@ public class ShadeCalculator {
 
         if (drop.getValue() != -1 && width.getValue() != -1) {
 
-            Measurement fabricWeight = fabricService.getWeightKg(fabric, width, drop);
+            // Get fabric weight in N
+            Measurement fabricWeight = getTotalFabricWeight(fabric, width, drop, "kg");
             fabricWeight = measurementConverter.convert(fabricWeight, "N");
-            Measurement bottomRailWeight = bottomRailService.getWeightKg(bottomRail, width);
+            // Get bottom rail weight in N
+            Measurement bottomRailWeight = getWeightPerUnit(bottomRail.getWeight(), width, "kg", "m");
             bottomRailWeight = measurementConverter.convert(bottomRailWeight, "N");
 
+            // If both values are valid
             if (fabricWeight.getValue() != -1 && bottomRailWeight.getValue() != -1) {
                 double totalLoad = fabricWeight.getValue() + bottomRailWeight.getValue();
-
                 result = Measurement.builder()
                         .value(totalLoad)
                         .unit("N")
@@ -157,25 +153,32 @@ public class ShadeCalculator {
      * @param drop The drop of the shade
      * @return the deflection of the tube
      */
-    public Measurement getTubeDeflection(RollerFabric fabric, RollerTube tube, Measurement width, Measurement drop){
+    public Measurement getTubeDeflection(
+            FabricCollection fabric,
+            BottomRailCollection bottomRail,
+            TubeCollection tube,
+            Measurement width,
+            Measurement drop,
+            String unit
+    ){
         Measurement result = Measurement.builder().value(-1).build();
-        BottomRail basic = bottomRailRepo.findByName("Euro Slim").orElse(null);
-        if (basic != null) {
-            Measurement l = measurementConverter.convert(width, "mm");
-            Measurement E = measurementConverter.convert(tube.getModulus(), "N/mm2");
 
-            if (l.getValue() != -1 && E.getValue() != -1) {
-                Measurement w = getTotalLoad(fabric, basic, width, drop); // N
-                Measurement I = getMomentOfInertia(tube); // mm^4
+        Measurement l = measurementConverter.convert(width, "mm");
+        Measurement E = measurementConverter.convert(tube.getModulus(), "N/mm2");
 
-                double deflection = (5 * w.getValue() * Math.pow(l.getValue(), 3)) / (384 * E.getValue() * I.getValue());
+        if (l.getValue() != -1 && E.getValue() != -1) {
+            Measurement w = getTotalLoad(fabric, bottomRail, width, drop); // N
+            Measurement I = getMomentOfInertia(tube); // mm^4
 
-                result = Measurement.builder()
-                        .value(deflection)
-                        .unit("mm")
-                        .build();
-            }
+            double deflection = (5 * w.getValue() * Math.pow(l.getValue(), 3)) / (384 * E.getValue() * I.getValue());
+
+            result = Measurement.builder()
+                    .value(deflection)
+                    .unit("mm")
+                    .build();
         }
+
+        result = measurementConverter.convert(result, unit);
         return result;
     }
 
@@ -185,11 +188,16 @@ public class ShadeCalculator {
      * @param fabric the fabric chosen
      * @return a list of all system limits
      */
-    public List<SystemLimit> getAllSystemLimits(String unit, RollerShadeSystem system, RollerFabric fabric) {
+    public List<SystemLimit> getAllSystemLimits(
+            String unit,
+            ShadeSystem system,
+            FabricCollection fabric,
+            BottomRailCollection bottomRail,
+            List<TubeCollection> tubes
+    ) {
         List<SystemLimit> systemLimits = new ArrayList<>();
-        List<RollerTube> tubes = tubeRepo.findAll();
-        for (RollerTube tube : tubes) {
-            SystemLimit systemLimit = getSystemLimit(unit, system, fabric, tube);
+        for (TubeCollection tube : tubes) {
+            SystemLimit systemLimit = getSystemLimit(unit, system, fabric, tube, bottomRail);
             systemLimits.add(systemLimit);
         }
         return systemLimits;
@@ -207,14 +215,18 @@ public class ShadeCalculator {
      * @param tube the tube chosen
      * @return All information about the system limit
      */
-    public SystemLimit getSystemLimit(String unit, RollerShadeSystem system, RollerFabric fabric, RollerTube tube) {
+    public SystemLimit getSystemLimit(
+            String unit,
+            ShadeSystem system,
+            FabricCollection fabric,
+            TubeCollection tube,
+            BottomRailCollection bottomRail
+    ) {
         double maxWidth = -1;
         float maxDeflection = 2.99f;
-        String bottomRail = "Euro Slim";
 
         Measurement drop = getMaxDrop(system.getMaxDiameter(), tube.getOuterDiameter(), fabric.getThickness());
-        BottomRail basic = bottomRailRepo.findByName(bottomRail).orElse(null);
-        if( drop.getValue() != -1 && basic != null){
+        if( drop.getValue() != -1){
             Measurement dropLimit = Measurement.builder()
                     .value(3)
                     .unit("m")
@@ -225,9 +237,10 @@ public class ShadeCalculator {
                 drop = dropLimit;
             }
 
-            Measurement fabricWeight = fabricService.getWeightGm(fabric, drop); // g/m
+            Measurement fabricWeight = getWeightPerUnit(fabric.getWeight(), drop, "g", "m"); // g/m
+
             fabricWeight = measurementConverter.convert(fabricWeight, "g/mm"); // g/mm
-            Measurement bottomRailWeight = measurementConverter.convert(basic.getWeight(), "g/mm");
+            Measurement bottomRailWeight = measurementConverter.convert(bottomRail.getWeight(), "g/mm");
 
             if(fabricWeight.getValue() != -1 && bottomRailWeight.getValue() != -1){
                 Measurement W = Measurement.builder()
@@ -269,6 +282,68 @@ public class ShadeCalculator {
                 .value(Math.round(measurement.getValue() * 100.0) / 100.0)
                 .unit(measurement.getUnit())
                 .build();
+    }
+
+
+    /**
+     * This method calculates the weight of a fabric and returns in the desired unit
+     * @param fabric the type of fabric to be calculated
+     * @param width width of shade
+     * @param drop drop of shade
+     * @param unit the unit to convert the weight into
+     * @return the weight of the fabric in the desired unit
+     */
+    private Measurement getTotalFabricWeight(FabricCollection fabric, Measurement width, Measurement drop, String unit){
+        Measurement result = Measurement.builder().value(-1).build();
+        String weightUnit = unit + "/m^2";
+
+        Measurement weight = measurementConverter.convert(fabric.getWeight(), weightUnit);
+        width = measurementConverter.convert(width, "m");
+        drop = measurementConverter.convert(drop, "m");
+
+        if(weight.getValue() != -1 && width.getValue() != -1 && drop.getValue() != -1){
+            result = Measurement.builder()
+                    .value(weight.getValue() * width.getValue() * drop.getValue())
+                    .unit(unit)
+                    .build();
+        }
+        return result;
+    }
+
+    /**
+     * This method will calculate the weight based off of one length of the measurement
+     * It will be used to calculate the weight of the bottom rail and the weight of the fabric
+     *
+     * @param weight original weight
+     * @param length the measurement of the length
+     * @param weightUnit the unit of the weight wanted
+     *                  (kg, g, etc...)
+     * @param lengthUnit the unit of length wanted (only used if the weight is squared)
+     *                   (m, cm, etc...)
+     * @return the desired weight
+     */
+    private Measurement getWeightPerUnit(Measurement weight, Measurement length, String weightUnit, String lengthUnit){
+        Measurement result = Measurement.builder().value(-1).build();
+
+        boolean squared = weight.getUnit().contains("^2");
+
+        // Convert weight and length to the same unit
+        String unit = squared? weightUnit + "/" + lengthUnit +"^2" : weightUnit + "/" + lengthUnit;
+
+        weight = measurementConverter.convert(weight, weightUnit+"/" + unit);
+        length = measurementConverter.convert(length, lengthUnit);
+
+        if(weight.getValue() != -1 && length.getValue() != -1){
+            unit = squared ? weightUnit+"/"+lengthUnit : weightUnit;
+
+            result = Measurement.builder()
+                    .value(weight.getValue() * length.getValue())
+                    .unit(unit)
+                    .build();
+        }
+
+        return result;
+
     }
 
 }

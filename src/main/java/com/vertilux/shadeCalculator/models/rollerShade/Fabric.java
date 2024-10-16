@@ -6,17 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@Entity
 @Data
-@Table(name="bottom_rails")
-public class BottomRail {
+@Entity
+@Table(name="fabrics")
+public class Fabric {
     @Id
     private String id;
     private String description;
 
-    @ManyToOne
-    private BottomRailCollection bottomRailCollection;
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    private FabricCollection fabricCollection;
 }

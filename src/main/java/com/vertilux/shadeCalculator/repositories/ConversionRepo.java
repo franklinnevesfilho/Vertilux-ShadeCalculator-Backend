@@ -1,7 +1,6 @@
 package com.vertilux.shadeCalculator.repositories;
 
-import com.vertilux.shadeCalculator.models.measurements.MeasurementUnit;
-import com.vertilux.shadeCalculator.models.measurements.UnitConversion;
+import com.vertilux.shadeCalculator.models.UnitConversion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

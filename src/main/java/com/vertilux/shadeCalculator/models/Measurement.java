@@ -1,6 +1,7 @@
-package com.vertilux.shadeCalculator.models.measurements;
+package com.vertilux.shadeCalculator.models;
 
-import jakarta.persistence.Embeddable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +18,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-@Embeddable
+@Entity
+@Table(name="measurements")
 public class Measurement {
+    @Id
+    @JsonIgnore
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private double value;
     private String unit;
 }

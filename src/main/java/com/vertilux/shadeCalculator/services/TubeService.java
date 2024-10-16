@@ -1,7 +1,7 @@
 package com.vertilux.shadeCalculator.services;
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerTube;
+import com.vertilux.shadeCalculator.models.rollerShade.Tube;
 import com.vertilux.shadeCalculator.repositories.RollerTubeRepo;
 import com.vertilux.shadeCalculator.schemas.RollerTubeCreation;
 import lombok.AllArgsConstructor;
@@ -14,14 +14,14 @@ import java.util.Optional;
 /**
  * RollerTubeService
  * This class is responsible for handling the business logic for the RollerTube entity.
- * @see RollerTube
+ * @see Tube
  * @author Franklin Neves Filho
  */
 
 @Slf4j
 @AllArgsConstructor
 @Service
-public class RollerTubeService extends MainService{
+public class TubeService extends MainService{
     private final RollerTubeRepo rollerTubeRepo;
 
     /**
@@ -29,10 +29,10 @@ public class RollerTubeService extends MainService{
      * @return Response object with all the roller tubes
      */
     public Response getAllRollerTubes(){
-        List<RollerTube> rollerTubes = rollerTubeRepo.findAll();
+        List<Tube> tubes = rollerTubeRepo.findAll();
 
         return Response.builder()
-                .data(mapToJson(rollerTubes))
+                .data(mapToJson(tubes))
                 .build();
     }
 
@@ -42,7 +42,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the found RollerTube
      */
     public Response getRollerTubeByName(String tubeName) {
-        RollerTube found = rollerTubeRepo.findByName(tubeName).orElse(null);
+        Tube found = rollerTubeRepo.findByName(tubeName).orElse(null);
         if (found != null) {
             return Response.builder()
                     .data(mapToJson(found))
@@ -61,7 +61,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the found RollerTube
      */
     public Response getRollerTubeById(String tubeId) {
-        Optional<RollerTube> found = rollerTubeRepo.findById(tubeId);
+        Optional<Tube> found = rollerTubeRepo.findById(tubeId);
         if (found.isPresent()) {
             return Response.builder()
                     .data(mapToJson(found.get()))
@@ -80,14 +80,14 @@ public class RollerTubeService extends MainService{
      * @return Response object with the created RollerTube
      */
     public Response createRollerTube(RollerTubeCreation tube) {
-        Optional<RollerTube> found = rollerTubeRepo.findByName(tube.getName());
+        Optional<Tube> found = rollerTubeRepo.findByName(tube.getName());
         if (found.isPresent()) {
             return Response.builder()
                     .errors(List.of("Tube already exists"))
                     .status("error")
                     .build();
         }else{
-            RollerTube created = rollerTubeRepo.save(convertToRollerTube(tube));
+            Tube created = rollerTubeRepo.save(convertToRollerTube(tube));
             return Response.builder()
                     .data(mapToJson(created))
                     .build();
@@ -101,9 +101,9 @@ public class RollerTubeService extends MainService{
      * @return Response object with the updated RollerTube
      */
     public Response updateRollerTube(String id, RollerTubeCreation tube) {
-        RollerTube found = rollerTubeRepo.findById(id).orElse(null);
+        Tube found = rollerTubeRepo.findById(id).orElse(null);
         if (found != null) {
-            RollerTube updated = rollerTubeRepo.save(convertToRollerTube(tube));
+            Tube updated = rollerTubeRepo.save(convertToRollerTube(tube));
             return Response.builder()
                     .data(mapToJson(updated))
                     .build();
@@ -121,7 +121,7 @@ public class RollerTubeService extends MainService{
      * @return Response object with the deleted RollerTube
      */
     public Response deleteRollerTube(String tubeName) {
-        RollerTube found = rollerTubeRepo.findByName(tubeName).orElse(null);
+        Tube found = rollerTubeRepo.findByName(tubeName).orElse(null);
         if (found != null) {
             rollerTubeRepo.delete(found);
             return Response.builder()
@@ -140,9 +140,9 @@ public class RollerTubeService extends MainService{
      * @param tube The RollerTubeCreation object to be converted
      * @return The converted RollerTube object
      */
-    private RollerTube convertToRollerTube(RollerTubeCreation tube) {
+    private Tube convertToRollerTube(RollerTubeCreation tube) {
 
-        return RollerTube.builder()
+        return Tube.builder()
                 .name(tube.getName())
                 .outerDiameter(tube.getOuterDiameter())
                 .innerDiameter(tube.getInnerDiameter())

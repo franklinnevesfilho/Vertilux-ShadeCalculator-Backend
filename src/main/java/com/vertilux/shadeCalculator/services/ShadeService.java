@@ -2,7 +2,7 @@ package com.vertilux.shadeCalculator.services;
 
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.rollerShade.RollerShadeSystem;
+import com.vertilux.shadeCalculator.models.rollerShade.ShadeSystem;
 import com.vertilux.shadeCalculator.repositories.RollerShadeRepo;
 import com.vertilux.shadeCalculator.schemas.RollerShadeSystemCreation;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class RollerShadeService extends MainService {
+public class ShadeService extends MainService {
     private final RollerShadeRepo rollerShadeRepo;
 
 
@@ -32,7 +32,7 @@ public class RollerShadeService extends MainService {
      * @return A Response object with all the RollerShadeSystems
      */
     public Response getAll() {
-        List<RollerShadeSystem> systems = rollerShadeRepo.findAll();
+        List<ShadeSystem> systems = rollerShadeRepo.findAll();
         return Response.builder().data(mapToJson(systems)).build();
     }
 
@@ -44,16 +44,16 @@ public class RollerShadeService extends MainService {
         log.info("Saving system: {}", system);
         Response response;
 
-        Optional<RollerShadeSystem> found = rollerShadeRepo.findByName(system.getName());
+        Optional<ShadeSystem> found = rollerShadeRepo.findByName(system.getName());
         if (found.isPresent()) {
             response = Response.builder().errors(List.of("System already exists")).build();
             return response;
         } else {
-            RollerShadeSystem newSystem = RollerShadeSystem.builder()
+            ShadeSystem newSystem = ShadeSystem.builder()
                     .name(system.getName())
                     .maxDiameter(system.getMaxDiameter())
                     .build();
-            RollerShadeSystem savedSystem = rollerShadeRepo.save(newSystem);
+            ShadeSystem savedSystem = rollerShadeRepo.save(newSystem);
             return Response.builder().data(mapToJson(savedSystem)).build();
         }
 
@@ -74,11 +74,11 @@ public class RollerShadeService extends MainService {
      * @return A Response object with the updated RollerShadeSystem
      */
     public Response update(String id, RollerShadeSystemCreation system) {
-        Optional<RollerShadeSystem> found = rollerShadeRepo.findById(id);
+        Optional<ShadeSystem> found = rollerShadeRepo.findById(id);
         if (found.isPresent()) {
-            RollerShadeSystem updatedSystem = found.get();
+            ShadeSystem updatedSystem = found.get();
             updatedSystem.setName(system.getName());
-            RollerShadeSystem savedSystem = rollerShadeRepo.save(updatedSystem);
+            ShadeSystem savedSystem = rollerShadeRepo.save(updatedSystem);
             return Response.builder().data(mapToJson(savedSystem)).build();
         } else {
             return Response.builder().errors(List.of("System not found")).build();
@@ -90,7 +90,7 @@ public class RollerShadeService extends MainService {
      * @return A Response object with the RollerShadeSystem
      */
     public Response getById(String id) {
-        Optional<RollerShadeSystem> found = rollerShadeRepo.findById(id);
+        Optional<ShadeSystem> found = rollerShadeRepo.findById(id);
         if (found.isPresent()) {
             return Response.builder().data(mapToJson(found.get())).build();
         } else {
@@ -103,7 +103,7 @@ public class RollerShadeService extends MainService {
      * @return A Response object with the RollerShadeSystem
      */
     public Response getByName(String name) {
-        Optional<RollerShadeSystem> found = rollerShadeRepo.findByName(name);
+        Optional<ShadeSystem> found = rollerShadeRepo.findByName(name);
         if (found.isPresent()) {
             return Response.builder().data(mapToJson(found.get())).build();
         } else {

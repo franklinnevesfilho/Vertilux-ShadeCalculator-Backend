@@ -1,9 +1,8 @@
 package com.vertilux.shadeCalculator.services;
 
 import com.vertilux.shadeCalculator.models.Response;
-import com.vertilux.shadeCalculator.models.measurements.Measurement;
-import com.vertilux.shadeCalculator.models.measurements.MeasurementUnit;
-import com.vertilux.shadeCalculator.models.measurements.UnitConversion;
+import com.vertilux.shadeCalculator.models.Measurement;
+import com.vertilux.shadeCalculator.models.UnitConversion;
 import com.vertilux.shadeCalculator.repositories.ConversionRepo;
 import com.vertilux.shadeCalculator.repositories.UnitRepo;
 import com.vertilux.shadeCalculator.schemas.ConversionCreation;
