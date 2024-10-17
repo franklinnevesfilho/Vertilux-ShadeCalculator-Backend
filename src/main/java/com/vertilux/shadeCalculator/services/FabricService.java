@@ -4,6 +4,7 @@ import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.models.rollerShade.FabricCollection;
 import com.vertilux.shadeCalculator.repositories.FabricCollectionRepo;
 import com.vertilux.shadeCalculator.repositories.RollerFabricRepo;
+import com.vertilux.shadeCalculator.schemas.FabricCollectionCreation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -166,6 +167,23 @@ public class FabricService extends MainService {
                     .status("error")
                     .build();
         }
+    }
+
+    /**
+     * This method creates a new fabric collection in the database.
+     * @param collection The collection to be created
+     * @return Response object with the created RollerFabric
+     */
+    public Response createCollection(FabricCollectionCreation collection){
+        FabricCollection newCollection = FabricCollection.builder()
+                .name(collection.getName())
+                .thickness(collection.getThickness())
+                .weight(collection.getWeight())
+                .build();
+        newCollection = collectionRepo.save(newCollection);
+        return Response.builder()
+                .data(mapToJson(newCollection))
+                .build();
     }
 
 

@@ -2,7 +2,7 @@ package com.vertilux.shadeCalculator.controllers;
 
 import com.vertilux.shadeCalculator.models.Response;
 import com.vertilux.shadeCalculator.schemas.BottomRailCreation;
-import com.vertilux.shadeCalculator.schemas.RollerFabricCreation;
+import com.vertilux.shadeCalculator.schemas.FabricCollectionCreation;
 import com.vertilux.shadeCalculator.schemas.RollerTubeCreation;
 import com.vertilux.shadeCalculator.schemas.Schema;
 import com.vertilux.shadeCalculator.services.BottomRailService;
@@ -34,6 +34,9 @@ public class ComponentController extends MainController {
     private FabricService fabricService;
     private BottomRailService bottomRailService;
 
+    //=================================
+    // Tube functions
+    //=================================
     private final Supplier<Response> getAllTubes =
             () -> tubeService.getAllRollerTubes();
     private final Function<String, Response> getTubeByName =
@@ -47,19 +50,17 @@ public class ComponentController extends MainController {
     private final BiFunction<String, Schema, Response> updateTube =
             (id, tube) -> tubeService.updateRollerTube(id, (RollerTubeCreation) tube);
 
+    //=================================
+    // Fabric functions
+    //=================================
     private final Supplier<Response> getAllFabrics =
-            () -> fabricService.getAllRollerFabrics();
-    private final Function<String, Response> getFabricByName =
-            (name) -> fabricService.getRollerFabricByName(name);
-    private final Function<String, Response> getFabricById =
-            (id) -> fabricService.getRollerFabricById(id);
-    private final Function<Schema, Response> saveFabric =
-            (fabric) -> fabricService.createRollerFabric((RollerFabricCreation) fabric);
-    private final Function<String, Response> deleteFabric =
-            (id) -> fabricService.deleteRollerFabric(id);
-    private final BiFunction<String, Schema, Response> updateFabric =
-            (id, fabric) -> fabricService.updateRollerFabric(id, (RollerFabricCreation) fabric);
+            () -> fabricService.getAllFabrics();
+    private final Function<Schema, Response> saveCollection =
+            (fabric) -> fabricService.createCollection((FabricCollectionCreation) fabric);
 
+    //=================================
+    // BottomRail functions
+    //=================================
     private final Supplier<Response> getAllBottomRails =
             () -> bottomRailService.getAllBottomRails();
     private final Function<String, Response> getBottomRailByName =
@@ -79,7 +80,7 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> save(@PathVariable("serviceName") String serviceName, @RequestBody Schema object){
         return switch (serviceName) {
             case "tube" -> request(saveTube, object);
-            case "fabric" -> request(saveFabric, object);
+            case "fabric" -> request(saveCollection, object);
             case "bottomrail" -> request(saveBottomRail, object);
             default -> factory.createBadRequestResponse();
         };
@@ -99,7 +100,6 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> getByName(@PathVariable("serviceName") String serviceName, @RequestParam String name){
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeByName, name);
-            case "fabric" -> getByParam(getFabricByName, name);
             case "bottomrail" -> getByParam(getBottomRailByName, name);
             default -> factory.createBadRequestResponse();
         };
@@ -109,7 +109,6 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> getById(@PathVariable("serviceName") String serviceName, @RequestParam String id){
         return switch (serviceName) {
             case "tube" -> getByParam(getTubeById, id);
-            case "fabric" -> getByParam(getFabricById, id);
             case "bottomrail" -> getByParam(getBottomRailById, id);
             default -> factory.createBadRequestResponse();
         };
@@ -119,7 +118,6 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> delete(@PathVariable("serviceName") String serviceName, @RequestParam String id){
         return switch (serviceName) {
             case "tube" -> getByParam(deleteTube, id);
-            case "fabric" -> getByParam(deleteFabric, id);
             case "bottomrail" -> getByParam(deleteBottomRail, id);
             default -> factory.createBadRequestResponse();
         };
@@ -129,7 +127,6 @@ public class ComponentController extends MainController {
     public ResponseEntity<Response> update(@PathVariable("serviceName") String serviceName, @RequestParam String id, @RequestBody Schema object){
         return switch (serviceName) {
             case "tube" -> getByTwoParam(updateTube, id, object);
-            case "fabric" -> getByTwoParam(updateFabric, id, object);
             case "bottomrail" -> getByTwoParam(updateBottomRail, id, object);
             default -> factory.createBadRequestResponse();
         };

@@ -37,7 +37,7 @@ public class ShadeCalculatorBackendApplication {
                 log.info("Running in development mode...");
                 createConversions(measurementService);
                 createBottomRails(bottomRailService);
-                createRollerFabrics(fabricService);
+                createFabricCollections(fabricService);
                 createRollerShadeSystems(rollerShadeService);
                 createRollerTubes(tubeService);
             }
@@ -208,9 +208,9 @@ public class ShadeCalculatorBackendApplication {
         rollerTubes.forEach(tubeService::createRollerTube);
 
     }
-    protected void createRollerFabrics(FabricService fabricService){
-        List<RollerFabricCreation> rollerFabrics = List.of(
-                RollerFabricCreation.builder()
+    protected void createFabricCollections(FabricService fabricService){
+        List<FabricCollectionCreation> rollerFabrics = List.of(
+                FabricCollectionCreation.builder()
                         .name("Light-demo")
                         .weight(Measurement.builder()
                                 .value(210)
@@ -223,7 +223,7 @@ public class ShadeCalculatorBackendApplication {
                                 .build()
                         )
                         .build(),
-                RollerFabricCreation.builder()
+                FabricCollectionCreation.builder()
                         .name("Medium-demo")
                         .weight(Measurement.builder()
                                 .value(410)
@@ -236,7 +236,7 @@ public class ShadeCalculatorBackendApplication {
                                 .build()
                         )
                         .build(),
-                RollerFabricCreation.builder()
+                FabricCollectionCreation.builder()
                         .name("Heavy-demo")
                         .weight(Measurement.builder()
                                 .value(610)
@@ -248,10 +248,140 @@ public class ShadeCalculatorBackendApplication {
                                 .unit("mm")
                                 .build()
                         )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 2900-5%")
+                        .weight(Measurement.builder()
+                                .value(395)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.57)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 3000-1%")
+                        .weight(Measurement.builder()
+                                .value(480)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.62)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 3000-3%")
+                        .weight(Measurement.builder()
+                                .value(440)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.60)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 3000-10%")
+                        .weight(Measurement.builder()
+                                .value(410)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.57)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 3000 BLACKOUT")
+                        .weight(Measurement.builder()
+                                .value(580)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.58)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 4000-5%")
+                        .weight(Measurement.builder()
+                                .value(530)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.64)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 4000-10%")
+                        .weight(Measurement.builder()
+                                .value(480)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.65)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 5000-1%")
+                        .weight(Measurement.builder()
+                                .value(750)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(1.08)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 3500-0.5%")
+                        .weight(Measurement.builder()
+                                .value(500)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.65)
+                                .unit("mm")
+                                .build()
+                        )
+                        .build(),
+                FabricCollectionCreation.builder()
+                        .name("VX-SCREEN 8200-3%")
+                        .weight(Measurement.builder()
+                                .value(420)
+                                .unit("g/m2")
+                                .build()
+                        )
+                        .thickness(Measurement.builder()
+                                .value(0.62)
+                                .unit("mm")
+                                .build()
+                        )
                         .build()
         );
 
-        rollerFabrics.forEach(fabricService::createRollerFabric);
+        rollerFabrics.forEach(fabricService::createCollection);
 
     }
     protected void createBottomRails(BottomRailService bottomRailService){
